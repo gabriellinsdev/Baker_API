@@ -5,9 +5,9 @@ namespace Baker_API.Repository
 {
     public class ProdutoRepository
     {
-        const string dbName = "Baker";
+        const string dbName = "DB_BAKER";
 
-        public void Inserir(ProdutoDomain produto)
+        public void Insert(ProdutoModel produto)
         {
             Helper helper = new Helper();
             helper.ExecuteScalar(dbName, "dbo.spINSProduto", new
@@ -19,10 +19,9 @@ namespace Baker_API.Repository
                 produto.DS_PRODUTO,
                 produto.VL_PRECO 
             });
-
         }
 
-        public void Alterar(ProdutoDomain produto)
+        public void Update(ProdutoModel produto)
         {
             Helper helper = new Helper();
             helper.ExecuteScalar(dbName, "dbo.spUPDProduto", new
@@ -36,32 +35,22 @@ namespace Baker_API.Repository
             });
         }
 
-        public void Excluir(ProdutoDomain produto)
+        public void Delete(int idProduto)
         {
             Helper helper = new Helper();
             helper.ExecuteScalar(dbName, "dbo.spDELProduto", new
             {
-                produto.CD_PRODUTO,
-                produto.CD_USUARIO,
-                produto.NM_PRODUTO,
-                produto.DS_CAMINHO_IMAGEM,
-                produto.DS_PRODUTO,
-                produto.VL_PRECO
+                CD_PRODUTO = idProduto
             });
 
         }
 
-        public List<ProdutoDomain> Listar(ProdutoDomain produto)
+        public List<ProdutoModel> List(Guid usuario)
         {
             Helper helper = new Helper();
-            return helper.ExecuteList<ProdutoDomain>(dbName, "dbo.spLSTProduto", new
+            return helper.ExecuteList<ProdutoModel>(dbName, "dbo.spLSTProduto", new
             {
-                produto.CD_PRODUTO,
-                produto.CD_USUARIO,
-                produto.NM_PRODUTO,
-                produto.DS_CAMINHO_IMAGEM,
-                produto.DS_PRODUTO,
-                produto.VL_PRECO
+                CD_USUARIO = usuario
             });
 
         }

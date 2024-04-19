@@ -1,4 +1,5 @@
 using Baker_API.Domains;
+using Baker_API.Services;
 using Baker_API.Views;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,25 +13,29 @@ namespace Baker_API.Controllers
         [HttpPut("Insert")]
         public void Insert(ProdutoView produto)
         {
-            Insert(produto);
+            Produtos prod = new Produtos();
+            prod.Insert(produto);
         }
 
         [HttpPut("Update")]
         public void Update(ProdutoView produto)
         {
-            Update(produto);
+            Produtos prod = new Produtos();
+            prod.Update(produto);
         }
 
-        [HttpGet("Delete")]
-        public void Delete(Guid usuario, int produto)
+        [HttpPut("Delete")]
+        public void Delete(int idProduto)
         {
-            Delete(usuario, produto);
+            Produtos prod = new Produtos();
+            prod.Delete(idProduto);
         }
 
         [HttpGet("List")]
         public void List(Guid usuario)
         {
-            List(usuario);
+            Produtos prod = new Produtos();
+            var ListaProduto = prod.List(usuario);
         }
 
     }

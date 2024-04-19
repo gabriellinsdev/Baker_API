@@ -16,7 +16,5 @@ namespace Baker_API.Views
         public string DS_PRODUTO { get; set; }
         [DataMember]
         public decimal VL_PRECO { get; set; }
-        [DataMember]
-        public byte BT_IMAGEM { get; set; }
     }
 }
