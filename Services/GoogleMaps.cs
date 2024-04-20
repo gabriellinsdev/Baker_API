@@ -45,7 +45,7 @@ namespace Baker_API.Services
                 }
                 else
                 {
-                    loc.DS_MENSAGEM = "Erro ao obter o endereço. Status: " + response.status;
+                    loc.DS_MENSAGEM = "Nenhum endereço encontrado ou CEP Inválido!";
                 }
             }
 
@@ -92,12 +92,12 @@ namespace Baker_API.Services
                         }
                         else
                         {
-                            padeiro.DS_MENSAGEM = "Nenhum resultado encontrado para o endereço fornecido.";
+                            padeiro.DS_MENSAGEM = "Nenhum resultado encontrado para o endereço fornecido./n/n" + enderecoFormatado;
                         }
                     }
                     else
                     {
-                        padeiro.DS_MENSAGEM = "Erro ao obter o endereço. Status: " + response.status;
+                        padeiro.DS_MENSAGEM = "Endereço não encontrado!";
                     }
                 }
             }

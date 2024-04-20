@@ -13,8 +13,8 @@ namespace Baker_API.Services
             {
                 Repository.PadeiroRepository rep = new Repository.PadeiroRepository();
 
-                List<PadeiroModel> lista = rep.List(NM_CIDADE);
                 List<PadeiroView> Padeiros = new List<PadeiroView>();
+                List<PadeiroModel> lista = rep.List(NM_CIDADE);
 
                 foreach (PadeiroModel PadeiroModel in lista)
                 {
@@ -47,7 +47,7 @@ namespace Baker_API.Services
 
         }
 
-        public List<PadeiroView> ListarMelhorLocalizacao(LocalizacaoView localizacao, List<PadeiroView> lstPadeiros)
+        public List<PadeiroView> ListarMelhorLocalizacao(LocalizacaoView localizacao, List<PadeiroView> lstPadeiros, int QT_LINHAS)
         {
             List<PadeiroView> lstPadeiroMaisProximos = new List<PadeiroView>();
 
@@ -55,7 +55,7 @@ namespace Baker_API.Services
             var enderecosOrdenados = lstPadeiros.OrderBy(e => DistanciaEntrePontos(e.CD_LATITUDE, e.CD_LONGITUDE, localizacao.CD_LATITUDE, localizacao.CD_LONGITUDE));
 
             // Selecionar os 3 endereços mais próximos
-            var enderecosMaisProximos = enderecosOrdenados.Take(3);
+            var enderecosMaisProximos = enderecosOrdenados.Take(QT_LINHAS);
 
             foreach(var endereco in enderecosMaisProximos)
             {
