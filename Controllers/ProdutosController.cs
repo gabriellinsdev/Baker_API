@@ -63,7 +63,7 @@ namespace Baker_API.Controllers
             {
                 prod.Delete(idProduto);
 
-                retorno.Mensagem = "Registro excluído com sucesso!";
+                retorno.Mensagem = "Exclusão efetuada com sucesso!";
                 return Ok(retorno);
             }
             catch (Exception ex)

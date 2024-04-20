@@ -4,43 +4,71 @@ using Baker_API.Views;
 
 namespace Baker_API.Services
 {
-    public class Produtos: IProdutos
+    public class Produtos : IProdutos
     {
 
         public void Insert(ProdutoView produto)
         {
-            Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
-            rep.Insert(Converter(produto));
+            try
+            {
+                Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
+                rep.Insert(Converter(produto));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void Update(ProdutoView produto)
         {
-            Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
-            rep.Update(Converter(produto));
+            try
+            {
+                Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
+                rep.Update(Converter(produto));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void Delete(int idProduto)
         {
-            Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
-            rep.Delete(idProduto);
+            try
+            {
+                Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
+                rep.Delete(idProduto);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public List<ProdutoView> List(Guid idUsuario)
         {
-            Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
-
-            List<ProdutoModel> lista = rep.List(idUsuario);
-            List<ProdutoView> produtos = new List<ProdutoView>();
-
-            foreach (ProdutoModel produtoModel in lista)
+            try
             {
-                ProdutoView model = new ProdutoView();
-                model = Converter(produtoModel);
+                Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
 
-                produtos.Add(model);
+                List<ProdutoModel> lista = rep.List(idUsuario);
+                List<ProdutoView> produtos = new List<ProdutoView>();
+
+                foreach (ProdutoModel produtoModel in lista)
+                {
+                    ProdutoView model = new ProdutoView();
+                    model = Converter(produtoModel);
+
+                    produtos.Add(model);
+                }
+
+                return produtos;
             }
-
-            return produtos;
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private ProdutoModel Converter(ProdutoView produto)
