@@ -45,12 +45,12 @@ namespace Baker_API.Repository
 
         }
 
-        public List<ProdutoModel> List(Guid usuario)
+        public List<ProdutoModel> List(Guid idUsuario)
         {
             Helper helper = new Helper();
             return helper.ExecuteList<ProdutoModel>(dbName, "dbo.spLSTProduto", new
             {
-                CD_USUARIO = usuario
+                CD_USUARIO = idUsuario
             });
 
         }

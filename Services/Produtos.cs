@@ -25,11 +25,11 @@ namespace Baker_API.Services
             rep.Delete(idProduto);
         }
 
-        public List<ProdutoView> List(Guid usuario)
+        public List<ProdutoView> List(Guid idUsuario)
         {
             Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
 
-            List<ProdutoModel> lista = rep.List(usuario);
+            List<ProdutoModel> lista = rep.List(idUsuario);
             List<ProdutoView> produtos = new List<ProdutoView>();
 
             foreach (ProdutoModel produtoModel in lista)
