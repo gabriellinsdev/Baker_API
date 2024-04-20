@@ -18,7 +18,7 @@ namespace Baker_API.Controllers
 
             try
             {
-                retorno.Data = prod.List(NM_CIDADE);
+                retorno.Data = prod.ListarPadeiros(NM_CIDADE);
 
                 if (retorno.Data == null)
                 {

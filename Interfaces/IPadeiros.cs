@@ -4,7 +4,9 @@ namespace Baker_API.Interfaces
 {
     public interface IPadeiros
     {
-        public List<PadeiroView> List(string CD_CIDADE);
+        List<PadeiroView> ListarPadeiros(string NM_CIDADE);
+        void ListarLocalizacaoPadeiro(LocalizacaoView localizacao, List<PadeiroView> lstPadeiros);
+        List<PadeiroView> ListarMelhorLocalizacao(LocalizacaoView localizacao, List<PadeiroView> lstPadeiros);
 
     }
 }

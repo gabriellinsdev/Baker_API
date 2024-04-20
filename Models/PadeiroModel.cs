@@ -1,4 +1,6 @@
-﻿namespace Baker_API.Models
+﻿using System.Runtime.Serialization;
+
+namespace Baker_API.Models
 {
     public class PadeiroModel
     {
@@ -12,6 +14,8 @@
         public string CD_CEP { get; set; }
         public string CD_SENHA { get; set; }
         public string CD_CPF_CNPJ { get; set; }
-
+        public double CD_LATITUDE { get; set; }
+        public double CD_LONGITUDE { get; set; }
+        public string DS_MENSAGEM { get; set; }
     }
 }

@@ -24,5 +24,12 @@ namespace Baker_API.Views
         public string CD_SENHA { get; set; }
         [DataMember]
         public string CD_CPF_CNPJ { get; set; }
+        [DataMember]
+        public double CD_LATITUDE { get; set; }
+        [DataMember]
+        public double CD_LONGITUDE { get; set; }
+        [DataMember]
+        public string DS_MENSAGEM { get; set; }
+
     }
 }
