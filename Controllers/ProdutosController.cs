@@ -1,5 +1,3 @@
-using Baker_API.Domains;
-using Baker_API.Interfaces;
 using Baker_API.Services;
 using Baker_API.Views;
 using Microsoft.AspNetCore.Mvc;
@@ -53,15 +51,15 @@ namespace Baker_API.Controllers
             }            
         }
 
-        [HttpPut("Delete")]
-        public IActionResult Delete(int idProduto)
+        [HttpGet("Delete")]
+        public IActionResult Delete(int CD_PRODUTO)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                prod.Delete(idProduto);
+                prod.Delete(CD_PRODUTO);
 
                 retorno.Mensagem = "Exclusão efetuada com sucesso!";
                 return Ok(retorno);
@@ -75,14 +73,14 @@ namespace Baker_API.Controllers
         }
 
         [HttpGet("List")]
-        public IActionResult List(Guid idUsuario)
+        public IActionResult List(Guid CD_USUARIO)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                retorno.Data = prod.List(idUsuario);
+                retorno.Data = prod.List(CD_USUARIO);
 
                 if (retorno.Data == null)
                 {

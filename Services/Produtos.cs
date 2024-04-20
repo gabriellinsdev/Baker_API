@@ -33,12 +33,12 @@ namespace Baker_API.Services
             }
         }
 
-        public void Delete(int idProduto)
+        public void Delete(int CD_PRODUTO)
         {
             try
             {
                 Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
-                rep.Delete(idProduto);
+                rep.Delete(CD_PRODUTO);
             }
             catch (Exception)
             {
@@ -46,13 +46,13 @@ namespace Baker_API.Services
             }
         }
 
-        public List<ProdutoView> List(Guid idUsuario)
+        public List<ProdutoView> List(Guid CD_USUARIO)
         {
             try
             {
                 Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
 
-                List<ProdutoModel> lista = rep.List(idUsuario);
+                List<ProdutoModel> lista = rep.List(CD_USUARIO);
                 List<ProdutoView> produtos = new List<ProdutoView>();
 
                 foreach (ProdutoModel produtoModel in lista)

@@ -35,22 +35,22 @@ namespace Baker_API.Repository
             });
         }
 
-        public void Delete(int idProduto)
+        public void Delete(int CD_PRODUTO)
         {
             Helper helper = new Helper();
             helper.ExecuteScalar(dbName, "dbo.spDELProduto", new
             {
-                CD_PRODUTO = idProduto
+                CD_PRODUTO
             });
 
         }
 
-        public List<ProdutoModel> List(Guid idUsuario)
+        public List<ProdutoModel> List(Guid CD_USUARIO)
         {
             Helper helper = new Helper();
             return helper.ExecuteList<ProdutoModel>(dbName, "dbo.spLSTProduto", new
             {
-                CD_USUARIO = idUsuario
+                CD_USUARIO
             });
 
         }
