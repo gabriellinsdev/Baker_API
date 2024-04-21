@@ -1,6 +1,5 @@
 ﻿using Baker_API.Interfaces;
 using Baker_API.Models;
-using Baker_API.Repository;
 using Baker_API.Views;
 
 namespace Baker_API.Services

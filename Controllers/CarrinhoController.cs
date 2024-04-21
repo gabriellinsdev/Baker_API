@@ -4,20 +4,39 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Baker_API.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-
-    public class PadeirosController : Controller
+    public class CarrinhoController : Controller
     {
-        [HttpGet("ListLocation")]
-        public IActionResult ListLocation(string NM_CIDADE)
+
+        [HttpPut("Save")]
+        public IActionResult Save(List<CarrinhoView> carrinho)
         {
-            Padeiros padeiro = new Padeiros();
+            Carrinho carr = new Carrinho();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                retorno.Data = padeiro.ListarPadeiros(NM_CIDADE);
+                carr.Save(carrinho);
+
+                retorno.Mensagem = "Salvo com sucesso!";
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                retorno.Mensagem = "Erro de Sistema";
+                retorno.StackTrace = ex.Message + "/n" + ex.StackTrace;
+                return BadRequest(retorno);
+            }
+        }
+
+        [HttpGet("List")]
+        public IActionResult List(Guid CD_USUARIO)
+        {
+            Carrinho carr = new Carrinho();
+            RetornoView retorno = new RetornoView();
+
+            try
+            {
+                retorno.Data = carr.List(CD_USUARIO);
 
                 if (retorno.Data == null)
                 {
@@ -33,31 +52,5 @@ namespace Baker_API.Controllers
                 return BadRequest(retorno);
             }
         }
-
-        [HttpGet("SalesReport")]
-        public IActionResult SalesReport(Guid CD_USUARIO)
-        {
-            Padeiros padeiro = new Padeiros();
-            RetornoView retorno = new RetornoView();
-
-            try
-            {
-                retorno.Data = padeiro.RelatorioVendas(CD_USUARIO);
-
-                if (retorno.Data == null)
-                {
-                    retorno.Mensagem = "Nenhum registro encontrado!";
-                }
-
-                return Ok(retorno);
-            }
-            catch (Exception ex)
-            {
-                retorno.Mensagem = "Erro de Sistema";
-                retorno.StackTrace = ex.Message + "/n" + ex.StackTrace;
-                return BadRequest(retorno);
-            }
-        }
-
     }
 }

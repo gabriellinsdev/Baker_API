@@ -1,7 +1,6 @@
 ﻿using Baker_API.Services;
 using Baker_API.Views;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace Baker_API.Controllers
 {

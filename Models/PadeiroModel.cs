@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Baker_API.Models
+﻿namespace Baker_API.Models
 {
     public class PadeiroModel
     {
