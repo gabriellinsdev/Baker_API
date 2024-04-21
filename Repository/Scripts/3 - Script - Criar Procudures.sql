@@ -190,26 +190,33 @@ GO
 
 
 -- CADASTRAR CARRINHO
-CREATE OR ALTER PROCEDURE CUS.spINSCarrinho 
-        @PRODUTOS       XML   
+CREATE OR ALTER PROCEDURE dbo.spINSCarrinho 
+        @CD_USUARIO UNIQUEIDENTIFIER,
+        @PRODUTOS   XML 
 AS    
 BEGIN    
+        
+
+    declare @hDoc AS INT    
+    exec    sp_xml_preparedocument @hDoc OUTPUT, @PRODUTOS
 
     -- CADASTRAR CARRINHO
-    ;with DADOS as
+    ;WITH DADOS AS
     (
-        select CD_USUARIO = @CD_USUARIO
+        SELECT  CD_USUARIO = @CD_USUARIO
     )
-    merge   dbo.TBL_CARRINHOS as TargetTbl  
-    using   DADOS             as SourceTbl  
+    MERGE   dbo.TBL_CARRINHOS AS TargetTbl  
+    USING   DADOS             AS SourceTbl  
   
-    on  TargetTbl.CD_USUARIO = SourceTbl.CD_USUARIO
+    ON  TargetTbl.CD_USUARIO = SourceTbl.CD_USUARIO
   
-    when NOT MATCHED
-         THEN INSERT (CD_USUARIO) VALUES (CD_USUARIO);
+    WHEN NOT MATCHED
+         THEN INSERT (CD_USUARIO) VALUES (SourceTbl.CD_USUARIO);
+
+
 
     -- OBTEM O CODIGO DO CARRINHO
-    DECLARE @CD_CARRINHO UNIQUEIDENTIFIER
+    DECLARE @CD_CARRINHO INT
 
     SELECT  @CD_CARRINHO = CD_CARRINHO
     FROM    dbo.TBL_CARRINHOS CA WITH (NOLOCK)
@@ -219,36 +226,33 @@ BEGIN
     -- LIMPA TODOS OS ITENS CADASTRADOS
     DELETE FROM dbo.TBL_ITENS_DO_CARRINHO WHERE CD_CARRINHO = @CD_CARRINHO      
 
-    -- CADASTRAR ITENS DO CARRINHO    
-    declare @hDoc AS INT    
-    exec    sp_xml_preparedocument @hDoc OUTPUT, @PRODUTOS  
-  
-    ;with Dados as  
+    ;WITH Dados AS  
     (  
-        select  
-	            CD_CARRINHO = @CD_CARRINHO,
+        SELECT  
+                CD_CARRINHO = @CD_CARRINHO,
 	            CD_PRODUTO,
-                QT_PRODUTO
+                QT_PRODUTO,
+                VL_PRECO
     
-        from openxml(@hDoc, 'Carrinho/Produto')  
-        with  
+        FROM OPENXML(@hDoc, 'Carrinho/Item')  
+        WITH  
         (     
-            CD_PRODUTO INT 'CD_PRODUTO'
-        )  
-  
+            CD_PRODUTO INT 'CD_PRODUTO',
+            QT_PRODUTO INT 'QT_PRODUTO',
+            VL_PRECO   DECIMAL 'VL_PRECO'
+        )
     )   
-    merge   dbo.TBL_ITENS_DO_CARRINHO as TargetTbl  
-    using   Dados   as SourceTbl  
+    MERGE   dbo.TBL_ITENS_DO_CARRINHO as TargetTbl  
+    USING   Dados   as SourceTbl  
   
-    on  TargetTbl.CD_CARRINHO = SourceTbl.CD_CARRINHO  
+    ON  TargetTbl.CD_CARRINHO = SourceTbl.CD_CARRINHO  
     and TargetTbl.CD_PRODUTO  = SourceTbl.CD_PRODUTO  
    
-    when NOT MATCHED 
-         THEN INSERT (CD_CARRINHO, CD_PRODUTO, QT_PRODUTO) VALUES (SourceTbl.CD_CARRINHO, SourceTbl.CD_PRODUTO, SourceTbl.QT_PRODUTO);
+    WHEN NOT MATCHED 
+         THEN INSERT (CD_CARRINHO, CD_PRODUTO, QT_PRODUTO, VL_PRECO) VALUES (SourceTbl.CD_CARRINHO, SourceTbl.CD_PRODUTO, SourceTbl.QT_PRODUTO, SourceTbl.VL_PRECO);
 
 END
 GO
-
 
 -- LISTAR PRODUTOS DO CARRINHO
 CREATE OR ALTER PROCEDURE dbo.spLSTCarrinho
