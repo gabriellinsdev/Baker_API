@@ -1,4 +1,5 @@
 ﻿using Baker_API.Domains;
+using Baker_API.Models;
 
 namespace Baker_API.Repository
 {
@@ -6,24 +7,20 @@ namespace Baker_API.Repository
     {
         const string dbName = "DB_BAKER";
 
-        public void Save(ProdutoModel produto)
+        public void Save(CarrinhoModel carrinho)
         {
             Helper helper = new Helper();
             helper.ExecuteScalar(dbName, "dbo.spINSCarrinho", new
             {
-                produto.CD_PRODUTO,
-                produto.CD_USUARIO,
-                produto.NM_PRODUTO,
-                produto.DS_CAMINHO_IMAGEM,
-                produto.DS_PRODUTO,
-                produto.VL_PRECO
+                carrinho.CD_PRODUTO,
+                carrinho.CD_USUARIO
             });
         }
 
-        public List<ProdutoModel> List(Guid CD_USUARIO)
+        public List<CarrinhoModel> List(Guid CD_USUARIO)
         {
             Helper helper = new Helper();
-            return helper.ExecuteList<ProdutoModel>(dbName, "dbo.spLSTProduto", new
+            return helper.ExecuteList<CarrinhoModel>(dbName, "dbo.spLSTCarrinho", new
             {
                 CD_USUARIO
             });
