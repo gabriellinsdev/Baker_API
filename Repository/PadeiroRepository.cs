@@ -18,5 +18,15 @@ namespace Baker_API.Repository
             });
 
         }
+
+        public List<RelatorioModel> Report(Guid CD_USUARIO)
+        {
+            Helper helper = new Helper();
+            return helper.ExecuteList<RelatorioModel>(dbName, "dbo.spRPTVendasPadeiros", new
+            {
+                CD_USUARIO
+            });
+
+        }
     }
 }

@@ -1,5 +1,15 @@
-﻿
+﻿use DB_BAKER
+go
 
+BEGIN TRANSACTION
+--ROLLBACK
+--COMMIT 
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- CADASTRO DE USUÁRIOS
+--------------------------------------------------------------------------------------------------------------------------------------------
 insert into dbo.TBL_USUARIOS
 (CD_USUARIO, NM_USUARIO,DS_EMAIL,DS_TELEFONE,NM_ESTADO,NM_CIDADE,DS_ENDERECO,CD_CEP,CD_SENHA,CD_CPF_CNPJ)
 values
@@ -16,17 +26,134 @@ values
 (newid(),'JOÃO (CLIENTE)',    'joao@gmail.com',    '13997138011','SP','SANTOS',     'AV. PEDRO LESSA, 501','1100011','123','11100011100'),
 (newid(),'PEDRO (CLIENTE)',   'pedro@gmail.com',   '13997138012','SP','SANTOS',     'RUA GUARARAPES, 10','1100012','123','22200022200'),
 (newid(),'ROGERIO (CLIENTE)', 'rogerio@gmail.com', '13997138013','SP','SÃO VICENTE','RUA TREZE DE MAIO, 25','1100013','123','33300033300')
+--------------------------------------------------------------------------------------------------------------------------------------------
 
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- CADASTRO DE PRODUTOS POR PADEIRO
+--------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE	@CD_USUARIO UNIQUEIDENTIFIER
+
+SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'GABRIEL (PADEIRO)'
 
 insert into dbo.TBL_PRODUTOS
 (CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
 values
-('3FA85F64-5717-4562-B3FC-2C963F66AFA6','PÃO','C:\TEMP','PÃES EM GERAL',15.00),
-('3FA85F64-5717-4562-B3FC-2C963F66AFA6','CAFÉ','C:\TEMP','CAFÉ COM AÇUCAR',6.00),
-('3FA85F64-5717-4562-B3FC-2C963F66AFA6','CAFÉ','C:\TEMP','CAFÉ COM AÇUCAR',6.00),
-('3FA85F64-5717-4562-B3FC-2C963F66AFA6','LEITE','C:\TEMP','LEITE COM AÇUCAR',6.00),
-('3FA85F64-5717-4562-B3FC-2C963F66AFA6','LEITE','C:\TEMP','LEITE SEM AÇUCAR',6.00)
+(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 2.50),
+(@CD_USUARIO,'Pão Integral','C:\TEMP',NULL, 12.50),
+(@CD_USUARIO,'Rosquinha','C:\TEMP',NULL,6.50),
+(@CD_USUARIO,'Brioche','C:\TEMP',NULL,17.90),
+(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.50),
+(@CD_USUARIO,'Pão Italiano','C:\TEMP',NULL,15.50),
+(@CD_USUARIO,'Croissant','C:\TEMP',NULL,7.20),
+(@CD_USUARIO,'Pão de Forma','C:\TEMP',NULL,22.90)
+
+SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'DIOGO (PADEIRO)'
+
+insert into dbo.TBL_PRODUTOS
+(CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
+values
+(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 2.70),
+(@CD_USUARIO,'Pão Integral','C:\TEMP',NULL, 12.50),
+(@CD_USUARIO,'Rosquinha','C:\TEMP',NULL,5.00),
+(@CD_USUARIO,'Brioche','C:\TEMP',NULL,14.90),
+(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.80),
+(@CD_USUARIO,'Pão de Forma','C:\TEMP',NULL,19.90)
+
+SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'FELIPE (PADEIRO)'
+
+insert into dbo.TBL_PRODUTOS
+(CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
+values
+(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 3.00),
+(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.80),
+(@CD_USUARIO,'Pão Italiano','C:\TEMP',NULL,13.50),
+(@CD_USUARIO,'Croissant','C:\TEMP',NULL,5.50),
+(@CD_USUARIO,'Pão de Forma','C:\TEMP',NULL,20.00)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- CADASTRO DE PEDIDOS
+--------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE	@CD_PADEIRO UNIQUEIDENTIFIER,
+		@CD_CLIENTE UNIQUEIDENTIFIER
+
+SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'DIOGO (PADEIRO)'
+SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'JOÃO (CLIENTE)'
+
+insert into dbo.TBL_PEDIDOS
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+values
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+
+SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'PEDRO (CLIENTE)'
+
+insert into dbo.TBL_PEDIDOS
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+values
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'GABRIEL (PADEIRO)'
+SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'JOÃO (CLIENTE)'
+
+insert into dbo.TBL_PEDIDOS
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+values
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+
+SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'ROGERIO (CLIENTE)'
+
+insert into dbo.TBL_PEDIDOS
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+values
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'FELIPE (PADEIRO)'
+SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'ROGERIO (CLIENTE)'
+
+insert into dbo.TBL_PEDIDOS
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+values
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- CADASTRO DE ITENS DE PEDIDOS
+--------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO dbo.TBL_ITENS_DO_PEDIDO
+SELECT
+        PE.CD_PEDIDO,
+        PD.CD_PRODUTO,
+        QT_PRODUTO = 1,
+        VL_PRECO = PD.VL_PRECO
+FROM    
+        dbo.TBL_PEDIDOS PE  WITH (NOLOCK)
+
+        CROSS APPLY
+        (
+            SELECT  *
+            FROM    dbo.TBL_PRODUTOS P WITH(NOLOCK)
+            WHERE   P.CD_USUARIO = PE.CD_PADEIRO
+        )  PD
+
+
 
 
 select * from DB_BAKER.dbo.TBL_USUARIOS  with(nolock)
 select * from DB_BAKER.dbo.TBL_PRODUTOS  with(nolock)
+select * from DB_BAKER.dbo.TBL_PEDIDOS   with(nolock)
+select * from DB_BAKER.dbo.TBL_ITENS_DO_PEDIDO  with(nolock)
+
+
+
+
+
+

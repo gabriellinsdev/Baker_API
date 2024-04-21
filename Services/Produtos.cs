@@ -53,17 +53,22 @@ namespace Baker_API.Services
                 Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
 
                 List<ProdutoModel> lista = rep.List(CD_USUARIO);
-                List<ProdutoView> produtos = new List<ProdutoView>();
+                List<ProdutoView> ListaProdutos = new List<ProdutoView>();
 
                 foreach (ProdutoModel produtoModel in lista)
                 {
                     ProdutoView model = new ProdutoView();
                     model = Converter(produtoModel);
 
-                    produtos.Add(model);
+                    ListaProdutos.Add(model);
                 }
 
-                return produtos;
+                if (ListaProdutos.Count() == 0)
+                {
+                    return null;
+                }
+
+                return ListaProdutos;
             }
             catch (Exception)
             {

@@ -126,3 +126,63 @@ BEGIN
 
 END
 GO
+
+
+-- RELATÓRIO DE VENDA POR PADEIRO
+
+CREATE OR ALTER PROCEDURE dbo.spRPTVendasPadeiros
+    @CD_USUARIO  UNIQUEIDENTIFIER
+AS
+BEGIN
+
+	SELECT
+			PE.CD_PEDIDO,
+			NM_PADEIRO          = PD.NM_USUARIO,
+			NM_CLIENTE          = CL.NM_USUARIO,
+			PE.DT_PEDIDO,
+			PR.NM_PRODUTO,
+			IT.QT_PRODUTO,
+			PR.VL_PRECO,
+            VL.VL_TOTAL,
+			CL.NM_ESTADO,
+			CL.NM_CIDADE,
+			CL.DS_ENDERECO
+	FROM
+		dbo.TBL_PEDIDOS PE  WITH (NOLOCK)
+
+        INNER JOIN dbo.TBL_ITENS_DO_PEDIDO  IT  WITH (NOLOCK)
+        ON  PE.CD_PEDIDO = IT.CD_PEDIDO
+
+        INNER JOIN dbo.TBL_PRODUTOS         PR  WITH (NOLOCK)
+        ON  IT.CD_PRODUTO = PR.CD_PRODUTO
+
+        INNER JOIN dbo.TBL_USUARIOS         CL  WITH (NOLOCK)
+        ON  PE.CD_CLIENTE = CL.CD_USUARIO
+
+        INNER JOIN dbo.TBL_USUARIOS PD  WITH (NOLOCK)
+        ON  PE.CD_PADEIRO = PD.CD_USUARIO
+
+        OUTER APPLY
+        (
+            SELECT  
+                    P.CD_PEDIDO,
+                    VL_TOTAL = SUM(R.VL_PRECO)
+            FROM
+		            dbo.TBL_PEDIDOS P  WITH (NOLOCK)
+
+                INNER JOIN dbo.TBL_ITENS_DO_PEDIDO  I  WITH (NOLOCK)
+                ON  P.CD_PEDIDO = I.CD_PEDIDO
+
+                INNER JOIN dbo.TBL_PRODUTOS         R  WITH (NOLOCK)
+                ON  I.CD_PRODUTO = R.CD_PRODUTO
+            WHERE
+                    P.CD_PEDIDO = PE.CD_PEDIDO
+            GROUP BY
+                    P.CD_PEDIDO
+        ) VL
+
+    WHERE
+            PE.CD_PADEIRO = @CD_USUARIO
+
+END
+GO

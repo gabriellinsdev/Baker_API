@@ -1,6 +1,6 @@
 ﻿namespace Baker_API.Models
 {
-    public class LocalizacaoModels
+    public class LocalizacaoModel
     {
         public Guid? CD_USUARIO { get; set; }
         public string? NM_USUARIO { get; set; }

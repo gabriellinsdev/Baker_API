@@ -13,12 +13,12 @@ namespace Baker_API.Controllers
         [HttpGet("ListLocation")]
         public IActionResult ListLocation(string NM_CIDADE)
         {
-            Padeiros prod = new Padeiros();
+            Padeiros padeiro = new Padeiros();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                retorno.Data = prod.ListarPadeiros(NM_CIDADE);
+                retorno.Data = padeiro.ListarPadeiros(NM_CIDADE);
 
                 if (retorno.Data == null)
                 {
@@ -34,5 +34,31 @@ namespace Baker_API.Controllers
                 return BadRequest(retorno);
             }
         }
+
+        [HttpGet("SalesReport")]
+        public IActionResult SalesReport(Guid CD_USUARIO)
+        {
+            Padeiros padeiro = new Padeiros();
+            RetornoView retorno = new RetornoView();
+
+            try
+            {
+                retorno.Data = padeiro.RelatorioVendas(CD_USUARIO);
+
+                if (retorno.Data == null)
+                {
+                    retorno.Mensagem = "Nenhum registro encontrado!";
+                }
+
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                retorno.Mensagem = "Erro de Sistema";
+                retorno.StackTrace = ex.Message + "/n" + ex.StackTrace;
+                return BadRequest(retorno);
+            }
+        }
+
     }
 }

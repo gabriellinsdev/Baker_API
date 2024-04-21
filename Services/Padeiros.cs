@@ -13,18 +13,53 @@ namespace Baker_API.Services
             {
                 Repository.PadeiroRepository rep = new Repository.PadeiroRepository();
 
-                List<PadeiroView> Padeiros = new List<PadeiroView>();
+                List<PadeiroView> ListaPadeiros = new List<PadeiroView>();
                 List<PadeiroModel> lista = rep.List(NM_CIDADE);
 
-                foreach (PadeiroModel PadeiroModel in lista)
+                foreach (PadeiroModel Padeiro in lista)
                 {
                     PadeiroView model = new PadeiroView();
-                    model = Converter(PadeiroModel);
+                    model = Converter(Padeiro);
 
-                    Padeiros.Add(model);
+                    ListaPadeiros.Add(model);
                 }
 
-                return Padeiros;
+                if (ListaPadeiros.Count() == 0)
+                {
+                    return null;
+                }
+
+                return ListaPadeiros;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<RelatorioView> RelatorioVendas(Guid CD_USUARIO)
+        {
+            try
+            {
+                Repository.PadeiroRepository rep = new Repository.PadeiroRepository();
+
+                List<RelatorioView> ListaRelatorio = new List<RelatorioView>();
+                List<RelatorioModel> lista = rep.Report(CD_USUARIO);
+
+                foreach (RelatorioModel Relatorio in lista)
+                {
+                    RelatorioView model = new RelatorioView();
+                    model = Converter(Relatorio);
+
+                    ListaRelatorio.Add(model);
+                }
+
+                if (ListaRelatorio.Count() == 0)
+                {
+                    return null;
+                }
+
+                return ListaRelatorio;
             }
             catch (Exception)
             {
@@ -60,6 +95,12 @@ namespace Baker_API.Services
             foreach(var endereco in enderecosMaisProximos)
             {
                 lstPadeiroMaisProximos.Add(endereco);
+            }
+
+
+            if (lstPadeiroMaisProximos.Count() == 0)
+            {
+                return null;
             }
 
             return lstPadeiroMaisProximos;
@@ -125,6 +166,44 @@ namespace Baker_API.Services
             obj.CD_CPF_CNPJ = padeiro.CD_CPF_CNPJ;
             obj.CD_LATITUDE = padeiro.CD_LATITUDE;
             obj.CD_LONGITUDE = padeiro.CD_LONGITUDE;
+
+            return obj;
+        }
+
+        private RelatorioModel Converter(RelatorioView relatorio)
+        {
+            RelatorioModel obj = new RelatorioModel();
+
+            obj.CD_PEDIDO = relatorio.CD_PEDIDO;
+            obj.NM_PADEIRO = relatorio.NM_PADEIRO;
+            obj.NM_CLIENTE = relatorio.NM_CLIENTE;
+            obj.DT_PEDIDO = relatorio.DT_PEDIDO;
+            obj.NM_PRODUTO = relatorio.NM_PRODUTO;
+            obj.QT_PRODUTO = relatorio.QT_PRODUTO;
+            obj.VL_PRECO = relatorio.VL_PRECO;
+            obj.VL_TOTAL = relatorio.VL_TOTAL;
+            obj.NM_ESTADO = relatorio.NM_ESTADO;
+            obj.NM_CIDADE = relatorio.NM_CIDADE;
+            obj.DS_ENDERECO = relatorio.DS_ENDERECO;
+
+            return obj;
+        }
+
+        private RelatorioView Converter(RelatorioModel relatorio) 
+        {
+            RelatorioView obj = new RelatorioView();
+
+            obj.CD_PEDIDO = relatorio.CD_PEDIDO;
+            obj.NM_PADEIRO = relatorio.NM_PADEIRO;
+            obj.NM_CLIENTE = relatorio.NM_CLIENTE;
+            obj.DT_PEDIDO = relatorio.DT_PEDIDO;
+            obj.NM_PRODUTO = relatorio.NM_PRODUTO;
+            obj.QT_PRODUTO = relatorio.QT_PRODUTO;
+            obj.VL_PRECO = relatorio.VL_PRECO;
+            obj.VL_TOTAL = relatorio.VL_TOTAL;
+            obj.NM_ESTADO = relatorio.NM_ESTADO;
+            obj.NM_CIDADE = relatorio.NM_CIDADE;
+            obj.DS_ENDERECO = relatorio.DS_ENDERECO;
 
             return obj;
         }
