@@ -8,5 +8,7 @@ namespace Baker_API.Views
         public Guid? CD_USUARIO { get; set; }
         [DataMember]
         public int CD_PRODUTO { get; set; }
+        [DataMember]
+        public int QT_PRODUTO { get; set; }
     }
 }

@@ -7,13 +7,12 @@ namespace Baker_API.Repository
     {
         const string dbName = "DB_BAKER";
 
-        public void Save(CarrinhoModel carrinho)
+        public void Save(string xmlProdutos)
         {
             Helper helper = new Helper();
             helper.ExecuteScalar(dbName, "dbo.spINSCarrinho", new
             {
-                carrinho.CD_PRODUTO,
-                carrinho.CD_USUARIO
+                PRODUTOS = xmlProdutos
             });
         }
 

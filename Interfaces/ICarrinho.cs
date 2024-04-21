@@ -2,10 +2,10 @@
 
 namespace Baker_API.Interfaces
 {
-    public class ICarrinho
+    public interface ICarrinho
     {
         void Save(List<CarrinhoView> carrinho);
-        List<CarrinhoView> List(Guid usuario);
+        List<CarrinhoView> List(Guid CD_USUARIO);
     }
 }
-}
+

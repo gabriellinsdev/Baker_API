@@ -37,7 +37,7 @@ GO
 
 CREATE TABLE dbo.TBL_CARRINHOS
 (
-	CD_CARRINHO UNIQUEIDENTIFIER NOT NULL,
+	CD_CARRINHO INT IDENTITY(1,1) NOT NULL,
 	CD_USUARIO  UNIQUEIDENTIFIER NOT NULL,
 	CONSTRAINT PK_TBL_CARRINHOS PRIMARY KEY (CD_CARRINHO), 
 	CONSTRAINT FK_TBL_CARRINHOS_TBL_USUARIOS FOREIGN KEY (CD_USUARIO) REFERENCES dbo.TBL_USUARIOS (CD_USUARIO) 
@@ -47,7 +47,7 @@ GO
 CREATE TABLE dbo.TBL_ITENS_DO_CARRINHO
 (
 	CD_ITENS_DO_CARRINHO INT IDENTITY(1,1) NOT NULL,
-	CD_CARRINHO          UNIQUEIDENTIFIER NOT NULL,
+	CD_CARRINHO          INT NOT NULL,
 	CD_PRODUTO           INT NOT NULL,
 	QT_PRODUTO           SMALLINT NOT NULL,
 	VL_PRECO             DECIMAL(6,2) NOT NULL,
@@ -82,23 +82,3 @@ CREATE TABLE dbo.TBL_ITENS_DO_PEDIDO
 	CONSTRAINT FK_TBL_ITENS_DO_PEDIDO_TBL_PRODUTOS FOREIGN KEY (CD_PRODUTO) REFERENCES dbo.TBL_PRODUTOS (CD_PRODUTO)
 )
 GO
-
---------------------------------------------------------------------------------------------------------------------------------------------
--- CADASTRO DE ITENS DE PEDIDOS
---------------------------------------------------------------------------------------------------------------------------------------------
-SELECT
-        PE.CD_PEDIDO,
-        PD.CD_PRODUTO,
-        QT_PRODUTO = 1,
-        VL_PRECO = PD.VL_PRECO
-
-INTO    dbo.TBL_ITENS_DO_PEDIDO
-FROM    
-        dbo.TBL_PEDIDOS PE  WITH (NOLOCK)
-
-        CROSS APPLY
-        (
-            SELECT  *
-            FROM    dbo.TBL_PRODUTOS P WITH(NOLOCK)
-            WHERE   P.CD_USUARIO = PE.CD_PADEIRO
-        )  PD

@@ -5,7 +5,10 @@ BEGIN TRANSACTION
 --ROLLBACK
 --COMMIT 
 
-
+DECLARE	@CD_USUARIO  UNIQUEIDENTIFIER,
+        @CD_PADEIRO  UNIQUEIDENTIFIER,
+		@CD_CLIENTE  UNIQUEIDENTIFIER,
+        @CD_CARRINHO INT
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRO DE USUÁRIOS
@@ -32,8 +35,6 @@ values
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRO DE PRODUTOS POR PADEIRO
 --------------------------------------------------------------------------------------------------------------------------------------------
-DECLARE	@CD_USUARIO UNIQUEIDENTIFIER
-
 SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'GABRIEL (PADEIRO)'
 
 insert into dbo.TBL_PRODUTOS
@@ -71,16 +72,21 @@ values
 (@CD_USUARIO,'Croissant','C:\TEMP',NULL,5.50),
 (@CD_USUARIO,'Pão de Forma','C:\TEMP',NULL,20.00)
 
---------------------------------------------------------------------------------------------------------------------------------------------
 
+SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'LUIS (PADEIRO)'
+
+insert into dbo.TBL_PRODUTOS
+(CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
+values
+(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 3.00),
+(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.80),
+(@CD_USUARIO,'Pão Italiano','C:\TEMP',NULL,13.50)
+--------------------------------------------------------------------------------------------------------------------------------------------
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRO DE PEDIDOS
 --------------------------------------------------------------------------------------------------------------------------------------------
-DECLARE	@CD_PADEIRO UNIQUEIDENTIFIER,
-		@CD_CLIENTE UNIQUEIDENTIFIER
-
 SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'DIOGO (PADEIRO)'
 SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'JOÃO (CLIENTE)'
 
@@ -143,14 +149,79 @@ FROM
             FROM    dbo.TBL_PRODUTOS P WITH(NOLOCK)
             WHERE   P.CD_USUARIO = PE.CD_PADEIRO
         )  PD
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- CADASTRO CARRINHO
+--------------------------------------------------------------------------------------------------------------------------------------------
+SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'PEDRO (CLIENTE)'
+IF NOT EXISTS (SELECT 1 FROM dbo.TBL_CARRINHOS WITH (NOLOCK) WHERE CD_USUARIO = @CD_CLIENTE)
+    INSERT INTO dbo.TBL_CARRINHOS (CD_USUARIO) VALUES (@CD_CLIENTE)
+
+SELECT  @CD_CARRINHO = CD_CARRINHO FROM dbo.TBL_CARRINHO WITH (NOLOCK) WHERE CD_USUARIO = @CD_CLIENTE
+SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'GABRIEL (PADEIRO)'
+
+INSERT INTO dbo.TBL_ITENS_DO_CARRINHO
+SELECT
+        CA.CD_CARRINHO,
+        PD.CD_PRODUTO,
+        QT_PRODUTO = 1,
+        PD.VL_PRECO
+FROM    
+        dbo.TBL_CARRINHOS CA  WITH (NOLOCK)
+
+        CROSS APPLY
+        (
+            SELECT  TOP 3 *
+            FROM    dbo.TBL_PRODUTOS P WITH(NOLOCK)
+            WHERE   P.CD_USUARIO = @CD_PADEIRO
+        )  PD
+WHERE
+        CA.CD_CARRINHO = @CD_CARRINHO
+
+
+SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'ROGERIO (CLIENTE)'
+IF NOT EXISTS (SELECT 1 FROM dbo.TBL_CARRINHOS WITH (NOLOCK) WHERE CD_USUARIO = @CD_CLIENTE)
+    INSERT INTO dbo.TBL_CARRINHOS (CD_USUARIO) VALUES (@CD_CLIENTE)
+
+SELECT  @CD_CARRINHO = CD_CARRINHO FROM dbo.TBL_CARRINHO WITH (NOLOCK) WHERE CD_USUARIO = @CD_CLIENTE
+SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'LUIS (PADEIRO)'
+
+INSERT INTO dbo.TBL_ITENS_DO_CARRINHO
+SELECT
+        CA.CD_CARRINHO,
+        PD.CD_PRODUTO,
+        QT_PRODUTO = 1,
+        PD.VL_PRECO
+FROM    
+        dbo.TBL_CARRINHOS CA  WITH (NOLOCK)
+
+        CROSS APPLY
+        (
+            SELECT  TOP 2 *
+            FROM    dbo.TBL_PRODUTOS P WITH(NOLOCK)
+            WHERE   P.CD_USUARIO = @CD_PADEIRO
+        )  PD
+WHERE
+        CA.CD_CARRINHO = @CD_CARRINHO
+
+--------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- DADOS DAS TABELAS
+--------------------------------------------------------------------------------------------------------------------------------------------
 select * from DB_BAKER.dbo.TBL_USUARIOS  with(nolock)
 select * from DB_BAKER.dbo.TBL_PRODUTOS  with(nolock)
 select * from DB_BAKER.dbo.TBL_PEDIDOS   with(nolock)
 select * from DB_BAKER.dbo.TBL_ITENS_DO_PEDIDO  with(nolock)
+select * from DB_BAKER.dbo.TBL_CARRINHOS   with(nolock)
+select * from DB_BAKER.dbo.TBL_ITENS_DO_CARRINHO  with(nolock)
+
 
 
 

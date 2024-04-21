@@ -8,16 +8,23 @@ namespace Baker_API.Controllers
     {
 
         [HttpPut("Save")]
-        public IActionResult Save(List<CarrinhoView> carrinho)
+        public IActionResult Save([FromBody] List<CarrinhoView> carrinhoItens)
         {
             Carrinho carr = new Carrinho();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                carr.Save(carrinho);
+                if (carrinhoItens == null || carrinhoItens.Count() == 0)
+                {
+                    retorno.Mensagem = "Nenhum item foi incluído no Carrinho!";
+                    return BadRequest(retorno);
+                }
+
+                carr.Save(carrinhoItens);
 
                 retorno.Mensagem = "Salvo com sucesso!";
+
                 return Ok(retorno);
             }
             catch (Exception ex)
