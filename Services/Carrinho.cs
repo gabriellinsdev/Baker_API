@@ -11,10 +11,23 @@ namespace Baker_API.Services
         {
             try
             {
-                Repository.CarrinhoRepository rep = new Repository.CarrinhoRepository();
+                Guid? CD_USUARIO = carrinhoItens.FirstOrDefault().CD_USUARIO;
 
-                string xmlProdutos = XmlCreator(carrinhoItens);
-                rep.Save(xmlProdutos);
+                if (CD_USUARIO != null)
+                {
+                    Repository.CarrinhoRepository rep = new Repository.CarrinhoRepository();
+
+                    List<CarrinhoView> Itens = carrinhoItens.Where(c => c.CD_PRODUTO != 0).ToList();
+
+                    string? xmlProdutos = null;
+
+                    if (Itens != null && Itens.Count() > 0)
+                    {
+                        xmlProdutos = XmlCreator(Itens);
+                    }
+
+                    rep.Save(CD_USUARIO, xmlProdutos);
+                }
             }
             catch (Exception)
             {
@@ -102,6 +115,10 @@ namespace Baker_API.Services
                 XmlElement qtProdutoElement = xmlDoc.CreateElement("QT_PRODUTO");
                 qtProdutoElement.InnerText = item.QT_PRODUTO.ToString();
                 carrinhoElement.AppendChild(qtProdutoElement);
+
+                XmlElement vlPrecoElement = xmlDoc.CreateElement("VL_PRECO");
+                vlPrecoElement.InnerText = item.VL_PRECO.ToString();
+                carrinhoElement.AppendChild(vlPrecoElement);
             }
 
             // Salvar o XML para um arquivo ou imprimir na tela

@@ -10,5 +10,7 @@ namespace Baker_API.Views
         public int CD_PRODUTO { get; set; }
         [DataMember]
         public int QT_PRODUTO { get; set; }
+        [DataMember]
+        public decimal VL_PRECO{ get; set; }
     }
 }

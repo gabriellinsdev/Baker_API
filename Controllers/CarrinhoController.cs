@@ -23,7 +23,7 @@ namespace Baker_API.Controllers
 
                 carr.Save(carrinhoItens);
 
-                retorno.Mensagem = "Salvo com sucesso!";
+                retorno.Mensagem = "Itens do Carrinho salvo com sucesso!";
 
                 return Ok(retorno);
             }
