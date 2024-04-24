@@ -9,8 +9,8 @@ namespace Baker_API.Controllers
     public class ProdutosController : ControllerBase
     {
 
-        [HttpPut("Insert")]
-        public IActionResult Insert(ProdutoView produto)
+        [HttpPost("Insert")]
+        public IActionResult Insert([FromForm] ProdutoView produto)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();

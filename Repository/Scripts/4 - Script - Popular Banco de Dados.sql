@@ -39,49 +39,49 @@ values
 SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'GABRIEL (PADEIRO)'
 
 insert into dbo.TBL_PRODUTOS
-(CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
+(CD_USUARIO,NM_PRODUTO,DS_PRODUTO,VL_PRECO)
 values
-(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 2.50),
-(@CD_USUARIO,'Pão Integral','C:\TEMP',NULL, 12.50),
-(@CD_USUARIO,'Rosquinha','C:\TEMP',NULL,6.50),
-(@CD_USUARIO,'Brioche','C:\TEMP',NULL,17.90),
-(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.50),
-(@CD_USUARIO,'Pão Italiano','C:\TEMP',NULL,15.50),
-(@CD_USUARIO,'Croissant','C:\TEMP',NULL,7.20),
-(@CD_USUARIO,'Pão de Forma','C:\TEMP',NULL,22.90)
+(@CD_USUARIO,'Pão de Leite', NULL, 2.50),
+(@CD_USUARIO,'Pão Integral', NULL, 12.50),
+(@CD_USUARIO,'Rosquinha', NULL,6.50),
+(@CD_USUARIO,'Brioche', NULL,17.90),
+(@CD_USUARIO,'Pão Francês', NULL,0.50),
+(@CD_USUARIO,'Pão Italiano', NULL,15.50),
+(@CD_USUARIO,'Croissant', NULL,7.20),
+(@CD_USUARIO,'Pão de Forma', NULL,22.90)
 
 SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'DIOGO (PADEIRO)'
 
 insert into dbo.TBL_PRODUTOS
-(CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
+(CD_USUARIO,NM_PRODUTO,DS_PRODUTO,VL_PRECO)
 values
-(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 2.70),
-(@CD_USUARIO,'Pão Integral','C:\TEMP',NULL, 12.50),
-(@CD_USUARIO,'Rosquinha','C:\TEMP',NULL,5.00),
-(@CD_USUARIO,'Brioche','C:\TEMP',NULL,14.90),
-(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.80),
-(@CD_USUARIO,'Pão de Forma','C:\TEMP',NULL,19.90)
+(@CD_USUARIO,'Pão de Leite', NULL, 2.70),
+(@CD_USUARIO,'Pão Integral', NULL, 12.50),
+(@CD_USUARIO,'Rosquinha', NULL,5.00),
+(@CD_USUARIO,'Brioche', NULL,14.90),
+(@CD_USUARIO,'Pão Francês', NULL,0.80),
+(@CD_USUARIO,'Pão de Forma', NULL,19.90)
 
 SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'FELIPE (PADEIRO)'
 
 insert into dbo.TBL_PRODUTOS
-(CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
+(CD_USUARIO,NM_PRODUTO,DS_PRODUTO,VL_PRECO)
 values
-(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 3.00),
-(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.80),
-(@CD_USUARIO,'Pão Italiano','C:\TEMP',NULL,13.50),
-(@CD_USUARIO,'Croissant','C:\TEMP',NULL,5.50),
-(@CD_USUARIO,'Pão de Forma','C:\TEMP',NULL,20.00)
+(@CD_USUARIO,'Pão de Leite', NULL, 3.00),
+(@CD_USUARIO,'Pão Francês', NULL,0.80),
+(@CD_USUARIO,'Pão Italiano', NULL,13.50),
+(@CD_USUARIO,'Croissant', NULL,5.50),
+(@CD_USUARIO,'Pão de Forma', NULL,20.00)
 
 
 SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'LUIS (PADEIRO)'
 
 insert into dbo.TBL_PRODUTOS
-(CD_USUARIO,NM_PRODUTO,DS_CAMINHO_IMAGEM,DS_PRODUTO,VL_PRECO)
+(CD_USUARIO,NM_PRODUTO,DS_PRODUTO,VL_PRECO)
 values
-(@CD_USUARIO,'Pão de Leite','C:\TEMP',NULL, 3.00),
-(@CD_USUARIO,'Pão Francês','C:\TEMP',NULL,0.80),
-(@CD_USUARIO,'Pão Italiano','C:\TEMP',NULL,13.50)
+(@CD_USUARIO,'Pão de Leite', NULL, 3.00),
+(@CD_USUARIO,'Pão Francês', NULL,0.80),
+(@CD_USUARIO,'Pão Italiano', NULL,13.50)
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -222,10 +222,4 @@ select * from DB_BAKER.dbo.TBL_PEDIDOS   with(nolock)
 select * from DB_BAKER.dbo.TBL_ITENS_DO_PEDIDO  with(nolock)
 select * from DB_BAKER.dbo.TBL_CARRINHOS   with(nolock)
 select * from DB_BAKER.dbo.TBL_ITENS_DO_CARRINHO  with(nolock)
-
-
-
-
-
-
 

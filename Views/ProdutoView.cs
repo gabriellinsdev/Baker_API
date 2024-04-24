@@ -11,10 +11,12 @@ namespace Baker_API.Views
         [DataMember]
         public string NM_PRODUTO { get; set; }
         [DataMember]
-        public string DS_CAMINHO_IMAGEM { get; set; }
-        [DataMember]
         public string DS_PRODUTO { get; set; }
         [DataMember]
         public decimal VL_PRECO { get; set; }
+        [DataMember]
+        public IFormFile FF_IMAGEM { get; set; }
+        [DataMember]
+        public byte[]? VB_IMAGEM { get; set; }
     }
 }

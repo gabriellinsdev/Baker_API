@@ -1,6 +1,7 @@
 ﻿using Baker_API.Domains;
 using Baker_API.Interfaces;
 using Baker_API.Views;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Baker_API.Services
 {
@@ -80,12 +81,14 @@ namespace Baker_API.Services
         {
             ProdutoModel obj = new ProdutoModel();
 
+            byte[] VB_IMAGEM = ConvertToByte(produto.FF_IMAGEM);
+
             obj.CD_PRODUTO = produto.CD_PRODUTO;
             obj.DS_PRODUTO = produto.DS_PRODUTO;
             obj.NM_PRODUTO = produto.NM_PRODUTO;
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
-            obj.DS_CAMINHO_IMAGEM = produto.DS_CAMINHO_IMAGEM;
+            obj.VB_IMAGEM = VB_IMAGEM;
 
             return obj;
         }
@@ -99,9 +102,27 @@ namespace Baker_API.Services
             obj.NM_PRODUTO = produto.NM_PRODUTO;
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
-            obj.DS_CAMINHO_IMAGEM = produto.DS_CAMINHO_IMAGEM;
+            obj.FF_IMAGEM = produto.FF_IMAGEM;
+            obj.VB_IMAGEM = produto.VB_IMAGEM;
 
             return obj;
+        }
+
+
+        private byte[] ConvertToByte(IFormFile imagem)
+        {
+            byte[] imagemBytes;
+            using (var stream = imagem.OpenReadStream())
+            {
+                using (var memoryStream = new System.IO.MemoryStream())
+                {
+                    stream.CopyTo(memoryStream);
+                    imagemBytes = memoryStream.ToArray();
+                }
+            }
+
+            return imagemBytes;
+
         }
     }
 }

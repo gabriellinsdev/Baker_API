@@ -15,9 +15,9 @@ namespace Baker_API.Repository
                 produto.CD_PRODUTO,
                 produto.CD_USUARIO,
                 produto.NM_PRODUTO,
-                produto.DS_CAMINHO_IMAGEM,
                 produto.DS_PRODUTO,
-                produto.VL_PRECO 
+                produto.VL_PRECO,
+                produto.VB_IMAGEM
             });
         }
 
@@ -29,9 +29,9 @@ namespace Baker_API.Repository
                 produto.CD_PRODUTO,
                 produto.CD_USUARIO,
                 produto.NM_PRODUTO,
-                produto.DS_CAMINHO_IMAGEM,
                 produto.DS_PRODUTO,
-                produto.VL_PRECO
+                produto.VL_PRECO,
+                produto.VB_IMAGEM
             });
         }
 
