@@ -10,14 +10,15 @@ namespace Baker_API.Controllers
     {
 
         [HttpPost("Insert")]
-        public IActionResult Insert([FromForm] ProdutoView produto)
+        public IActionResult Insert([FromBody] ProdutoView produto, [FromForm] IFormFile imagem)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                prod.Insert(produto);
+
+                prod.Insert(produto, imagem);
 
                 retorno.Mensagem = "Salvo com sucesso!";
                 return Ok(retorno);
@@ -31,14 +32,15 @@ namespace Baker_API.Controllers
         }
 
         [HttpPut("Update")]
-        public IActionResult Update(ProdutoView produto)
+        public IActionResult Update([FromBody] ProdutoView produto, [FromForm] IFormFile imagem)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                prod.Update(produto);
+
+                prod.Update(produto, imagem);
 
                 retorno.Mensagem = "Salvo com sucesso!";
                 return Ok(retorno);

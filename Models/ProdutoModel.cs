@@ -1,4 +1,6 @@
-﻿namespace Baker_API.Domains
+﻿using Baker_API.Models;
+
+namespace Baker_API.Domains
 {
     public class ProdutoModel
     {
@@ -7,7 +9,7 @@
         public string? NM_PRODUTO { get; set; }
         public string? DS_PRODUTO { get; set; }
         public decimal VL_PRECO { get; set; }
-        public IFormFile FF_IMAGEM { get; set; }
-        public byte[]? VB_IMAGEM { get; set; }
+        public byte[]? VB_IMAGEM { get; set; } = null;
+        public List<AlimentoRestritoModel>? LS_ALIMENTO_RESTRITO { get; set; }
     }
 }

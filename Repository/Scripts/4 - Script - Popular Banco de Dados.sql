@@ -34,6 +34,15 @@ values
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
+-- CADASTRO ALIMENTOS RESTRITIVOS
+--------------------------------------------------------------------------------------------------------------------------------------------
+insert  into dbo.TBL_ALIMENTO_RESTRITIVO (DS_ALIMENTO) values
+('LACTOSE'),
+('GLÚTEN'),
+('LOW-CARB')
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRO DE PRODUTOS POR PADEIRO
 --------------------------------------------------------------------------------------------------------------------------------------------
 SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'GABRIEL (PADEIRO)'
@@ -49,6 +58,7 @@ values
 (@CD_USUARIO,'Pão Italiano', NULL,15.50),
 (@CD_USUARIO,'Croissant', NULL,7.20),
 (@CD_USUARIO,'Pão de Forma', NULL,22.90)
+
 
 SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'DIOGO (PADEIRO)'
 
@@ -83,6 +93,52 @@ values
 (@CD_USUARIO,'Pão Francês', NULL,0.80),
 (@CD_USUARIO,'Pão Italiano', NULL,13.50)
 --------------------------------------------------------------------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- CADASTRO DE PRODUTOS RESTRITIVOS
+--------------------------------------------------------------------------------------------------------------------------------------------
+INSERT  INTO dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS
+SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
+FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
+        INNER JOIN dbo.TBL_PRODUTOS P WITH (NOLOCK) 
+        ON  P.CD_USUARIO = U.CD_USUARIO
+        OUTER APPLY
+        (
+            SELECT  R.CD_ALIMENTO_RESTRITO 
+            FROM    dbo.TBL_ALIMENTO_RESTRITIVO R WITH(NOLOCK)
+            WHERE   R.DS_ALIMENTO IN ('LACTOSE')
+        ) A
+WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
+AND     P.NM_PRODUTO IN ('Pão de Leite')
+UNION
+SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
+FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
+        INNER JOIN dbo.TBL_PRODUTOS P WITH (NOLOCK) 
+        ON  P.CD_USUARIO = U.CD_USUARIO
+        OUTER APPLY
+        (
+            SELECT  R.CD_ALIMENTO_RESTRITO 
+            FROM    dbo.TBL_ALIMENTO_RESTRITIVO R WITH(NOLOCK)
+            WHERE   R.DS_ALIMENTO IN ('GLÚTEN')
+        ) A
+WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
+AND     P.NM_PRODUTO IN ('Pão de Leite', 'Pão Integral', 'Pão Francês', 'Pão Italiano', 'Pão de Forma')
+UNION
+SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
+FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
+        INNER JOIN dbo.TBL_PRODUTOS P WITH (NOLOCK) 
+        ON  P.CD_USUARIO = U.CD_USUARIO
+        OUTER APPLY
+        (
+            SELECT  R.CD_ALIMENTO_RESTRITO 
+            FROM    dbo.TBL_ALIMENTO_RESTRITIVO R WITH(NOLOCK)
+            WHERE   R.DS_ALIMENTO IN ('LOW-CARB')
+        ) A
+WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
+AND     P.NM_PRODUTO IN ('Rosquinha', 'Brioche')
+
+
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
@@ -151,8 +207,6 @@ FROM
             WHERE   P.CD_USUARIO = PE.CD_PADEIRO
         )  PD
 --------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRO CARRINHO
