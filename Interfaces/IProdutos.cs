@@ -4,9 +4,9 @@ namespace Baker_API.Interfaces
 {
     public interface IProdutos
     {
-        public void Insert(ProdutoView produtos, IFormFile imagem);
+        public void Insert(ProdutoView produtos);
 
-        public void Update(ProdutoView produtos, IFormFile imagem);
+        public void Update(ProdutoView produtos);
 
         public void Delete(int idProduto);
 

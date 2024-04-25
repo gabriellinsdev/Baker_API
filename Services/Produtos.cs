@@ -1,25 +1,19 @@
 ﻿using Baker_API.Domains;
 using Baker_API.Interfaces;
-using Baker_API.Models;
 using Baker_API.Views;
-using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Baker_API.Services
 {
     public class Produtos : IProdutos
     {
 
-        public void Insert(ProdutoView produto, IFormFile imagem)
+        public void Insert(ProdutoView produto)
         {
             try
             {
                 Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
-
-                List<AlimentoRestritoView> Itens = produto.LS_ALIMENTO_RESTRITO;
-
-                string? xmlAlimentoRestrito = GerarXml(Itens);
-
-                rep.Insert(Converter(produto, imagem), xmlAlimentoRestrito);
+                rep.Insert(Converter(produto));
             }
             catch (Exception)
             {
@@ -27,17 +21,12 @@ namespace Baker_API.Services
             }
         }
 
-        public void Update(ProdutoView produto, IFormFile imagem)
+        public void Update(ProdutoView produto)
         {
             try
             {
                 Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
-
-                List<AlimentoRestritoView> Itens = produto.LS_ALIMENTO_RESTRITO;
-
-                string? xmlAlimentoRestrito = GerarXml(Itens);
-
-                rep.Update(Converter(produto, imagem), xmlAlimentoRestrito);
+                rep.Update(Converter(produto));
             }
             catch (Exception)
             {
@@ -88,11 +77,11 @@ namespace Baker_API.Services
             }
         }
 
-        private ProdutoModel Converter(ProdutoView produto, IFormFile imagem)
+        private ProdutoModel Converter(ProdutoView produto)
         {
             ProdutoModel obj = new ProdutoModel();
 
-            byte[] VB_IMAGEM = ConvertToByte(imagem);
+            byte[] VB_IMAGEM = ConvertToByte(produto.FF_IMAGEM);
 
             obj.CD_PRODUTO = produto.CD_PRODUTO;
             obj.DS_PRODUTO = produto.DS_PRODUTO;
@@ -100,16 +89,6 @@ namespace Baker_API.Services
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
             obj.VB_IMAGEM = VB_IMAGEM;
-
-            foreach(AlimentoRestritoView lst in produto.LS_ALIMENTO_RESTRITO)
-            {
-                AlimentoRestritoModel model = new AlimentoRestritoModel();
-
-                model.CD_ALIMENTO_RESTRITO = lst.CD_ALIMENTO_RESTRITO;
-                model.DS_ALIMENTO_RESTRITO = lst.DS_ALIMENTO_RESTRITO;
-
-                obj.LS_ALIMENTO_RESTRITO.Add(model);
-            }
 
             return obj;
         }
@@ -123,21 +102,12 @@ namespace Baker_API.Services
             obj.NM_PRODUTO = produto.NM_PRODUTO;
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
+            obj.FF_IMAGEM = produto.FF_IMAGEM;
             obj.VB_IMAGEM = produto.VB_IMAGEM;
-
-            foreach (AlimentoRestritoModel lst in produto.LS_ALIMENTO_RESTRITO)
-            {
-                AlimentoRestritoView view = new AlimentoRestritoView();
-
-                view.CD_ALIMENTO_RESTRITO = lst.CD_ALIMENTO_RESTRITO;
-                view.DS_ALIMENTO_RESTRITO = lst.DS_ALIMENTO_RESTRITO;
-
-                obj.LS_ALIMENTO_RESTRITO.Add(view);
-            }
-
 
             return obj;
         }
+
 
         private byte[] ConvertToByte(IFormFile imagem)
         {
@@ -154,42 +124,5 @@ namespace Baker_API.Services
             return imagemBytes;
 
         }
-
-        private string? GerarXml(List<AlimentoRestritoView>? itens)
-        {
-            if (itens != null && itens.Count() > 0)
-            {
-                return XmlCreator(itens);
-            }
-            return null;
-        }
-
-        private string XmlCreator(List<AlimentoRestritoView> carrinhoItens)
-        {
-            // Criando um documento XML
-            XmlDocument xmlDoc = new XmlDocument();
-
-            // Criando o nó raiz
-            XmlElement root = xmlDoc.CreateElement("AlimentoRestrito");
-            xmlDoc.AppendChild(root);
-
-            // Adicionando os itens do carrinho
-            foreach (var item in carrinhoItens)
-            {
-                // Criando o nó do carrinho
-                XmlElement carrinhoElement = xmlDoc.CreateElement("Item");
-                root.AppendChild(carrinhoElement);
-
-                // Adicionando os campos ao nó do carrinho
-                XmlElement cdAlimentoRestritoElement = xmlDoc.CreateElement("CD_ALIMENTO_RESTRITO");
-                cdAlimentoRestritoElement.InnerText = item.CD_ALIMENTO_RESTRITO.ToString();
-                carrinhoElement.AppendChild(cdAlimentoRestritoElement);
-
-            }
-
-            // Salvar o XML para um arquivo ou imprimir na tela
-            return xmlDoc.OuterXml;
-        }
-
     }
 }

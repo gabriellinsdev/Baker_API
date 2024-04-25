@@ -10,15 +10,14 @@ namespace Baker_API.Controllers
     {
 
         [HttpPost("Insert")]
-        public IActionResult Insert([FromBody] ProdutoView produto, [FromForm] IFormFile imagem)
+        public IActionResult Insert([FromForm] ProdutoView produto)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();
 
             try
             {
-
-                prod.Insert(produto, imagem);
+                prod.Insert(produto);
 
                 retorno.Mensagem = "Salvo com sucesso!";
                 return Ok(retorno);
@@ -32,15 +31,14 @@ namespace Baker_API.Controllers
         }
 
         [HttpPut("Update")]
-        public IActionResult Update([FromBody] ProdutoView produto, [FromForm] IFormFile imagem)
+        public IActionResult Update(ProdutoView produto)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();
 
             try
             {
-
-                prod.Update(produto, imagem);
+                prod.Update(produto);
 
                 retorno.Mensagem = "Salvo com sucesso!";
                 return Ok(retorno);
@@ -50,7 +48,7 @@ namespace Baker_API.Controllers
                 retorno.Mensagem = "Erro de Sistema";
                 retorno.StackTrace = ex.Message + "/n" + ex.StackTrace;
                 return BadRequest(retorno);
-            }            
+            }
         }
 
         [HttpGet("Delete")]
