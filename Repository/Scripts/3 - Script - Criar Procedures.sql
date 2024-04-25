@@ -241,6 +241,7 @@ BEGIN
 			PR.NM_PRODUTO,
 			IT.QT_PRODUTO,
 			PR.VL_PRECO,
+            VL_SUBTOTAL         = PR.VL_PRECO * IT.QT_PRODUTO,
             VL.VL_TOTAL,
 			CL.NM_ESTADO,
 			CL.NM_CIDADE,

@@ -19,6 +19,8 @@ namespace Baker_API.Views
         [DataMember]
         public decimal VL_PRECO { get; set; }
         [DataMember]
+        public decimal VL_SUBTOTAL { get; set; }
+        [DataMember]
         public decimal VL_TOTAL { get; set; }
         [DataMember]
         public string NM_ESTADO { get; set; }

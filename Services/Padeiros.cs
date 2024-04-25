@@ -180,6 +180,7 @@ namespace Baker_API.Services
             obj.NM_PRODUTO = relatorio.NM_PRODUTO;
             obj.QT_PRODUTO = relatorio.QT_PRODUTO;
             obj.VL_PRECO = relatorio.VL_PRECO;
+            obj.VL_SUBTOTAL = relatorio.VL_SUBTOTAL;
             obj.VL_TOTAL = relatorio.VL_TOTAL;
             obj.NM_ESTADO = relatorio.NM_ESTADO;
             obj.NM_CIDADE = relatorio.NM_CIDADE;
@@ -199,6 +200,7 @@ namespace Baker_API.Services
             obj.NM_PRODUTO = relatorio.NM_PRODUTO;
             obj.QT_PRODUTO = relatorio.QT_PRODUTO;
             obj.VL_PRECO = relatorio.VL_PRECO;
+            obj.VL_SUBTOTAL = relatorio.VL_SUBTOTAL;
             obj.VL_TOTAL = relatorio.VL_TOTAL;
             obj.NM_ESTADO = relatorio.NM_ESTADO;
             obj.NM_CIDADE = relatorio.NM_CIDADE;
