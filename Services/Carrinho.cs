@@ -7,27 +7,27 @@ namespace Baker_API.Services
 {
     public class Carrinho : ICarrinho
     {
-        public void Save(List<CarrinhoView> carrinhoItens)
+        public void Save(CarrinhoView carrinho)
         {
             try
             {
-                Guid? CD_USUARIO = carrinhoItens.FirstOrDefault().CD_USUARIO;
+                Repository.CarrinhoRepository rep = new Repository.CarrinhoRepository();
 
-                if (CD_USUARIO != null)
-                {
-                    Repository.CarrinhoRepository rep = new Repository.CarrinhoRepository();
+                rep.Save(carrinho);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
-                    List<CarrinhoView> Itens = carrinhoItens.Where(c => c.CD_PRODUTO != 0).ToList();
+        public void Delete(Guid CD_USUARIO, int CD_PRODUTO)
+        {
+            try
+            {
+                Repository.CarrinhoRepository rep = new Repository.CarrinhoRepository();
 
-                    string? xmlProdutos = null;
-
-                    if (Itens != null && Itens.Count() > 0)
-                    {
-                        xmlProdutos = XmlCreator(Itens);
-                    }
-
-                    rep.Save(CD_USUARIO, xmlProdutos);
-                }
+                rep.Delete(CD_USUARIO, CD_PRODUTO);
             }
             catch (Exception)
             {

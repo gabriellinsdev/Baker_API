@@ -86,11 +86,11 @@ GO
 -- ALTERAR PRODUTOS
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spUPDProduto
-	@CD_PRODUTO BIGINT,
+	@CD_PRODUTO INT,
 	@CD_USUARIO UNIQUEIDENTIFIER,
 	@NM_PRODUTO VARCHAR(100), 
 	@DS_PRODUTO VARCHAR(300),
-	@VL_PRECO DECIMAL(6,2) ,
+	@VL_PRECO DECIMAL(6,2),
     @VB_IMAGEM VARBINARY(MAX),
     @PRODUTOS_RESTRITOS XML = NULL      -- Exemplo: 
                                         --'<AlimentoRestrito>
@@ -158,7 +158,7 @@ GO
 -- EXCLUIR PRODUTOS
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spDELProduto
-    @CD_PRODUTO BIGINT
+    @CD_PRODUTO INT
 AS
 BEGIN
 
@@ -286,32 +286,17 @@ BEGIN
 END
 GO
 
-
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRAR CARRINHO
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spINSCarrinho 
-        @CD_USUARIO UNIQUEIDENTIFIER,
-        @PRODUTOS   XML = NULL          -- Exemplo: 
-                                        --'<Carrinho>
-                                        --     <Item>
-                                        --         <CD_USUARIO>3fa85f64-5717-4562-b3fc-2c963f66afa6</CD_USUARIO>
-                                        --         <CD_PRODUTO>1</CD_PRODUTO>
-                                        --         <QT_PRODUTO>2</QT_PRODUTO>
-                                        --         <VL_PRECO>3</VL_PRECO>
-                                        --     </Item>
-                                        --     <Item>
-                                        --         <CD_USUARIO>3fa85f64-5717-4562-b3fc-2c963f66afa6</CD_USUARIO>
-                                        --         <CD_PRODUTO>4</CD_PRODUTO>
-                                        --         <QT_PRODUTO>5</QT_PRODUTO>
-                                        --         <VL_PRECO>6</VL_PRECO>
-                                        --     </Item>
-                                        --</Carrinho>'
+	@CD_USUARIO UNIQUEIDENTIFIER,
+  	@CD_PRODUTO INT,
+	@QT_PRODUTO SMALLINT, 
+	@VL_PRECO   DECIMAL(6,2)
+
 AS    
 BEGIN    
-
-    declare @hDoc AS INT    
-    exec    sp_xml_preparedocument @hDoc OUTPUT, @PRODUTOS
 
     -- CADASTRAR CARRINHO
     ;WITH DADOS AS
@@ -334,42 +319,55 @@ BEGIN
     FROM    dbo.TBL_CARRINHOS CA WITH (NOLOCK)
     WHERE   CA.CD_USUARIO = @CD_USUARIO
 
-
-    -- LIMPA TODOS OS ITENS CADASTRADOS
-    DELETE FROM dbo.TBL_ITENS_DO_CARRINHO WHERE CD_CARRINHO = @CD_CARRINHO      
-
-    IF (@PRODUTOS IS NOT NULL)
-    BEGIN
-
-        ;WITH Dados AS  
-        (  
-            SELECT  
-                    CD_CARRINHO = @CD_CARRINHO,
-	                CD_PRODUTO,
-                    QT_PRODUTO,
-                    VL_PRECO
-    
-            FROM    OPENXML(@hDoc, 'Carrinho/Item')  
-            WITH  
-            (     
-                CD_PRODUTO INT 'CD_PRODUTO',
-                QT_PRODUTO INT 'QT_PRODUTO',
-                VL_PRECO   DECIMAL 'VL_PRECO'
-            )
-        )   
-        MERGE   dbo.TBL_ITENS_DO_CARRINHO as TargetTbl  
-        USING   Dados   as SourceTbl  
+    ;WITH Dados AS  
+    (  
+        SELECT  
+                CD_CARRINHO = @CD_CARRINHO,
+	            CD_PRODUTO  = @CD_PRODUTO,
+                QT_PRODUTO  = @QT_PRODUTO,
+                VL_PRECO    = @VL_PRECO
+    )   
+    MERGE   dbo.TBL_ITENS_DO_CARRINHO as TargetTbl  
+    USING   Dados   as SourceTbl  
   
-        ON  TargetTbl.CD_CARRINHO = SourceTbl.CD_CARRINHO  
-        and TargetTbl.CD_PRODUTO  = SourceTbl.CD_PRODUTO  
+    ON  TargetTbl.CD_CARRINHO = SourceTbl.CD_CARRINHO  
+    and TargetTbl.CD_PRODUTO  = SourceTbl.CD_PRODUTO  
    
-        WHEN NOT MATCHED 
-             THEN INSERT (CD_CARRINHO, CD_PRODUTO, QT_PRODUTO, VL_PRECO) VALUES (SourceTbl.CD_CARRINHO, SourceTbl.CD_PRODUTO, SourceTbl.QT_PRODUTO, SourceTbl.VL_PRECO);
+    WHEN NOT MATCHED 
+            THEN INSERT (CD_CARRINHO, CD_PRODUTO, QT_PRODUTO, VL_PRECO) VALUES (SourceTbl.CD_CARRINHO, SourceTbl.CD_PRODUTO, SourceTbl.QT_PRODUTO, SourceTbl.VL_PRECO)
 
-    END
+	WHEN MATCHED THEN
+		UPDATE SET QT_PRODUTO = SourceTbl.QT_PRODUTO;
 
 END
 GO
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- REMOVER PRODUTO DO CARRINHO
+--------------------------------------------------------------------------------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.spDELCarrinho 
+	@CD_USUARIO UNIQUEIDENTIFIER,
+  	@CD_PRODUTO INT
+
+AS    
+BEGIN  
+
+    -- OBTEM O CODIGO DO CARRINHO
+    DECLARE @CD_CARRINHO INT
+
+    SELECT  @CD_CARRINHO = CD_CARRINHO
+    FROM    dbo.TBL_CARRINHOS CA WITH (NOLOCK)
+    WHERE   CA.CD_USUARIO = @CD_USUARIO
+
+
+    DELETE FROM dbo.TBL_ITENS_DO_CARRINHO WHERE CD_CARRINHO = @CD_CARRINHO AND CD_PRODUTO = @CD_PRODUTO
+
+
+END
+GO
+
+
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- LISTAR PRODUTOS DO CARRINHO
@@ -379,21 +377,21 @@ CREATE OR ALTER PROCEDURE dbo.spLSTCarrinho
 AS
 BEGIN
 
+     SELECT  
+		     IT.CD_ITENS_DO_CARRINHO,
+             CA.CD_CARRINHO,
+             PR.CD_PRODUTO,
+             PR.NM_PRODUTO,
+             IT.QT_PRODUTO,
+             PR.VL_PRECO
 
-    SELECT  
-            CA.CD_CARRINHO,
-            PR.CD_PRODUTO,
-            PR.NM_PRODUTO,
-            IT.QT_PRODUTO,
-            PR.VL_PRECO
+     FROM    dbo.TBL_CARRINHOS   CA  WITH (NOLOCK)
 
-    FROM    dbo.TBL_CARRINHOS   CA  WITH (NOLOCK)
+             INNER JOIN dbo.TBL_ITENS_DO_CARRINHO  IT  WITH (NOLOCK)
+             ON  CA.CD_CARRINHO = IT.CD_CARRINHO
 
-            INNER JOIN dbo.TBL_ITENS_DO_CARRINHO  IT  WITH (NOLOCK)
-            ON  CA.CD_CARRINHO = IT.CD_CARRINHO
-
-            INNER JOIN dbo.TBL_PRODUTOS  PR  WITH (NOLOCK)
-            ON  IT.CD_PRODUTO = PR.CD_PRODUTO
+             INNER JOIN dbo.TBL_PRODUTOS  PR  WITH (NOLOCK)
+             ON  IT.CD_PRODUTO = PR.CD_PRODUTO
 
     WHERE   CA.CD_USUARIO = @CD_USUARIO
 END

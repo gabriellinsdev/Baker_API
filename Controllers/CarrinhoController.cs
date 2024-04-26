@@ -4,24 +4,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Baker_API.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class CarrinhoController : Controller
     {
 
-        [HttpPut("Save")]
-        public IActionResult Save([FromBody] List<CarrinhoView> carrinhoItens)
+        [HttpPost("Save")]
+        public IActionResult Save([FromBody] CarrinhoView carrinhoIten)
         {
             Carrinho carr = new Carrinho();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                if (carrinhoItens == null || carrinhoItens.Count() == 0)
+                if (carrinhoIten == null)
                 {
                     retorno.Mensagem = "Nenhum item foi incluído no Carrinho!";
                     return BadRequest(retorno);
                 }
 
-                carr.Save(carrinhoItens);
+                carr.Save(carrinhoIten);
 
                 retorno.Mensagem = "Itens do Carrinho salvo com sucesso!";
 
@@ -34,6 +36,30 @@ namespace Baker_API.Controllers
                 return BadRequest(retorno);
             }
         }
+
+        [HttpPut("Delete")]
+        public IActionResult Delete(Guid CD_USUARIO, int CD_PRODUTO)
+        {
+            Carrinho carr = new Carrinho();
+            RetornoView retorno = new RetornoView();
+
+            try
+            {
+
+                carr.Delete(CD_USUARIO, CD_PRODUTO);
+
+                retorno.Mensagem = "Iten do Carrinho removido com sucesso!";
+
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                retorno.Mensagem = "Erro de Sistema";
+                retorno.StackTrace = ex.Message + "/n" + ex.StackTrace;
+                return BadRequest(retorno);
+            }
+        }
+
 
         [HttpGet("List")]
         public IActionResult List(Guid CD_USUARIO)
