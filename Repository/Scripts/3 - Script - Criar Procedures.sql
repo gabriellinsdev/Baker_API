@@ -200,9 +200,30 @@ GO
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros
     @NM_CIDADE  VARCHAR(50) = NULL
+
 AS
 BEGIN
 
+    ;WITH ALIMENTOS AS
+    (
+        SELECT  *                
+        FROM    (
+
+                    SELECT  
+                            P.CD_USUARIO,
+                            AR.DS_ALIMENTO, 
+                            CD_ALIMENTO_RESTRITO = CASE WHEN AR.CD_ALIMENTO_RESTRITO IS NOT NULL THEN 1 ELSE 0 END
+                    FROM    dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS   PA  WITH (NOLOCK)
+                            INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR  WITH (NOLOCK)
+                            ON  PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
+                            INNER JOIN dbo.TBL_PRODUTOS  P  WITH (NOLOCK)
+                            ON  P.CD_PRODUTO = PA.CD_PRODUTO
+                ) AS Alimentos
+        PIVOT   (
+                    SUM(Alimentos.CD_ALIMENTO_RESTRITO) 
+                    FOR Alimentos.DS_ALIMENTO IN ([GLUTEN], [LACTOSE], [LOW-CARB], [ARTESANAL])
+                ) AS PivotTable      
+    )
 	SELECT
             US.CD_USUARIO,
             US.NM_USUARIO,
@@ -214,24 +235,38 @@ BEGIN
             US.CD_CEP,
             US.CD_SENHA,
             US.CD_CPF_CNPJ,
-            PA.CD_ALIMENTO_RESTRITIVO
-    
-    FROM    dbo.TBL_USUARIOS             US  WITH (NOLOCK)
+            [GLUTEN]    = CASE WHEN SUM(ISNULL(AL.[GLUTEN],0))    > 0 THEN 1 ELSE 0 END,
+            [LACTOSE]   = CASE WHEN SUM(ISNULL(AL.[LACTOSE],0))   > 0 THEN 1 ELSE 0 END,
+            [LOW-CARB]  = CASE WHEN SUM(ISNULL(AL.[LOW-CARB],0))  > 0 THEN 1 ELSE 0 END,
+            [ARTESANAL] = CASE WHEN SUM(ISNULL(AL.[ARTESANAL],0)) > 0 THEN 1 ELSE 0 END    
 
-            INNER JOIN dbo.TBL_PRODUTOS  PR  WITH (NOLOCK)
+    FROM    dbo.TBL_USUARIOS            US  WITH (NOLOCK)
+
+            INNER JOIN dbo.TBL_PRODUTOS PR  WITH (NOLOCK)
             ON  US.CD_USUARIO = PR.CD_USUARIO
 
-            -- TODO - Criar PIVOT dos Alimentos Restritivos
-
-            LEFT JOIN dbo.TBL_PRODUTO_ALIMENTO_RESTRITIVO  PA  WITH (NOLOCK)
-            ON  PR.CD_PRODUTO = PA.CD_PRODUTO
+            LEFT JOIN   ALIMENTOS       AL
+            ON  AL.CD_USUARIO = PR.CD_USUARIO
 
     WHERE
             (UPPER(US.NM_CIDADE) = UPPER(@NM_CIDADE) OR @NM_CIDADE IS NULL)
 	AND		LEN(TRIM(US.CD_CPF_CNPJ)) = 14		-- 14 caracteres define ser um CNPJ
 
+    GROUP BY
+            US.CD_USUARIO,
+            US.NM_USUARIO,
+            US.DS_EMAIL,
+            US.DS_TELEFONE,
+            US.NM_ESTADO,
+            US.NM_CIDADE,
+            US.DS_ENDERECO,
+            US.CD_CEP,
+            US.CD_SENHA,
+            US.CD_CPF_CNPJ
+
 END
 GO
+
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
