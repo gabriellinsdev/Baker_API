@@ -121,7 +121,7 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         (
             SELECT  R.CD_ALIMENTO_RESTRITO 
             FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
-            WHERE   R.DS_ALIMENTO IN ('GLÚTEN')
+            WHERE   R.DS_ALIMENTO IN ('GLUTEN')
         ) A
 WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
 AND     P.NM_PRODUTO IN ('Pão de Leite', 'Pão Integral', 'Pão Francês', 'Pão Italiano', 'Pão de Forma')
@@ -138,8 +138,19 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         ) A
 WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
 AND     P.NM_PRODUTO IN ('Rosquinha', 'Brioche')
-
-
+UNION
+SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
+FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
+        INNER JOIN dbo.TBL_PRODUTOS P WITH (NOLOCK) 
+        ON  P.CD_USUARIO = U.CD_USUARIO
+        OUTER APPLY
+        (
+            SELECT  R.CD_ALIMENTO_RESTRITO 
+            FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
+            WHERE   R.DS_ALIMENTO IN ('ARTESANAL')
+        ) A
+WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
+AND     P.NM_PRODUTO IN ('Pão de Leite', 'Pão Italiano')
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
@@ -278,4 +289,6 @@ select * from DB_BAKER.dbo.TBL_PEDIDOS   with(nolock)
 select * from DB_BAKER.dbo.TBL_ITENS_DO_PEDIDO  with(nolock)
 select * from DB_BAKER.dbo.TBL_CARRINHOS   with(nolock)
 select * from DB_BAKER.dbo.TBL_ITENS_DO_CARRINHO  with(nolock)
+select * from DB_BAKER.dbo.TBL_ALIMENTOS_RESTRITOS   with(nolock)
+select * from DB_BAKER.dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS  with(nolock)
 
