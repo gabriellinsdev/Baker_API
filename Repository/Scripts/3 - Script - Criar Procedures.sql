@@ -199,7 +199,7 @@ GO
 -- LISTAR LOCALIZACAO DOS PADEIROS
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros
-    @NM_CIDADE  VARCHAR(50)
+    @NM_CIDADE  VARCHAR(50) = NULL
 AS
 BEGIN
 
@@ -213,12 +213,21 @@ BEGIN
             US.DS_ENDERECO,
             US.CD_CEP,
             US.CD_SENHA,
-            US.CD_CPF_CNPJ
-	FROM
-		dbo.TBL_USUARIOS US  WITH (NOLOCK)
+            US.CD_CPF_CNPJ,
+            PA.CD_ALIMENTO_RESTRITIVO
+    
+    FROM    dbo.TBL_USUARIOS             US  WITH (NOLOCK)
+
+            INNER JOIN dbo.TBL_PRODUTOS  PR  WITH (NOLOCK)
+            ON  US.CD_USUARIO = PR.CD_USUARIO
+
+            -- TODO - Criar PIVOT dos Alimentos Restritivos
+
+            LEFT JOIN dbo.TBL_PRODUTO_ALIMENTO_RESTRITIVO  PA  WITH (NOLOCK)
+            ON  PR.CD_PRODUTO = PA.CD_PRODUTO
 
     WHERE
-            UPPER(US.NM_CIDADE) = UPPER(@NM_CIDADE)
+            (UPPER(US.NM_CIDADE) = UPPER(@NM_CIDADE) OR @NM_CIDADE IS NULL)
 	AND		LEN(TRIM(US.CD_CPF_CNPJ)) = 14		-- 14 caracteres define ser um CNPJ
 
 END
