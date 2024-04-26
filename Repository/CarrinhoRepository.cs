@@ -20,13 +20,12 @@ namespace Baker_API.Repository
             }) ;
         }
 
-        public void Delete(Guid CD_USUARIO, int CD_PRODUTO)
+        public void Delete(int CD_ITENS_DO_CARRINHO)
         {
             Helper helper = new Helper();
             helper.ExecuteScalar(dbName, "dbo.spDELCarrinho", new
             {
-                CD_USUARIO,
-                CD_PRODUTO
+                CD_ITENS_DO_CARRINHO
             });
         }
 

@@ -36,11 +36,11 @@ values
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRO ALIMENTOS RESTRITIVOS
 --------------------------------------------------------------------------------------------------------------------------------------------
-insert  into dbo.TBL_ALIMENTO_RESTRITIVO (DS_ALIMENTO) values
-('GLÚTEN'),
-('LACTOSE'),
-('LOW-CARB'),
-('ARTESANAL')
+INSERT  INTO dbo.TBL_ALIMENTOS_RESTRITOS (CD_ALIMENTO_RESTRITO, DS_ALIMENTO) values
+(1,'GLUTEN'),
+(2,'LACTOSE'),
+(3,'LOW-CARB'),
+(4,'ARTESANAL')
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         OUTER APPLY
         (
             SELECT  R.CD_ALIMENTO_RESTRITO 
-            FROM    dbo.TBL_ALIMENTO_RESTRITIVO R WITH(NOLOCK)
+            FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
             WHERE   R.DS_ALIMENTO IN ('LACTOSE')
         ) A
 WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
@@ -120,7 +120,7 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         OUTER APPLY
         (
             SELECT  R.CD_ALIMENTO_RESTRITO 
-            FROM    dbo.TBL_ALIMENTO_RESTRITIVO R WITH(NOLOCK)
+            FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
             WHERE   R.DS_ALIMENTO IN ('GLÚTEN')
         ) A
 WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
@@ -133,7 +133,7 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         OUTER APPLY
         (
             SELECT  R.CD_ALIMENTO_RESTRITO 
-            FROM    dbo.TBL_ALIMENTO_RESTRITIVO R WITH(NOLOCK)
+            FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
             WHERE   R.DS_ALIMENTO IN ('LOW-CARB')
         ) A
 WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','FELIPE (PADEIRO)','LUIS (PADEIRO)')
@@ -266,7 +266,8 @@ WHERE
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
+--ROLLBACK
+--COMMIT 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- DADOS DAS TABELAS

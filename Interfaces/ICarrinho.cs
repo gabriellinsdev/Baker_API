@@ -5,7 +5,7 @@ namespace Baker_API.Interfaces
     public interface ICarrinho
     {
         void Save(CarrinhoView carrinho);
-        void Delete(Guid CD_USUARIO, int CD_PRODUTO);
+        void Delete(int CD_ITENS_DO_CARRINHO);
         List<CarrinhoView> List(Guid CD_USUARIO);
     }
 }

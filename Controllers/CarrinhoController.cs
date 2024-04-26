@@ -38,7 +38,7 @@ namespace Baker_API.Controllers
         }
 
         [HttpPut("Delete")]
-        public IActionResult Delete(Guid CD_USUARIO, int CD_PRODUTO)
+        public IActionResult Delete(int CD_ITENS_DO_CARRINHO)
         {
             Carrinho carr = new Carrinho();
             RetornoView retorno = new RetornoView();
@@ -46,7 +46,7 @@ namespace Baker_API.Controllers
             try
             {
 
-                carr.Delete(CD_USUARIO, CD_PRODUTO);
+                carr.Delete(CD_ITENS_DO_CARRINHO);
 
                 retorno.Mensagem = "Iten do Carrinho removido com sucesso!";
 

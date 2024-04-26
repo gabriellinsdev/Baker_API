@@ -353,32 +353,6 @@ GO
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
--- REMOVER PRODUTO DO CARRINHO
---------------------------------------------------------------------------------------------------------------------------------------------
-CREATE OR ALTER PROCEDURE dbo.spDELCarrinho 
-	@CD_USUARIO UNIQUEIDENTIFIER,
-  	@CD_PRODUTO INT
-
-AS    
-BEGIN  
-
-    -- OBTEM O CODIGO DO CARRINHO
-    DECLARE @CD_CARRINHO INT
-
-    SELECT  @CD_CARRINHO = CD_CARRINHO
-    FROM    dbo.TBL_CARRINHOS CA WITH (NOLOCK)
-    WHERE   CA.CD_USUARIO = @CD_USUARIO
-
-
-    DELETE FROM dbo.TBL_ITENS_DO_CARRINHO WHERE CD_CARRINHO = @CD_CARRINHO AND CD_PRODUTO = @CD_PRODUTO
-
-
-END
-GO
-
-
-
---------------------------------------------------------------------------------------------------------------------------------------------
 -- LISTAR PRODUTOS DO CARRINHO
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spLSTCarrinho
@@ -392,7 +366,8 @@ BEGIN
              PR.CD_PRODUTO,
              PR.NM_PRODUTO,
              IT.QT_PRODUTO,
-             PR.VL_PRECO
+             PR.VL_PRECO,
+             PR.VB_IMAGEM
 
      FROM    dbo.TBL_CARRINHOS   CA  WITH (NOLOCK)
 
@@ -404,3 +379,21 @@ BEGIN
 
     WHERE   CA.CD_USUARIO = @CD_USUARIO
 END
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- REMOVER PRODUTO DO CARRINHO
+--------------------------------------------------------------------------------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.spDELCarrinho 
+	@CD_ITENS_DO_CARRINHO INT
+
+AS    
+BEGIN  
+
+    DELETE FROM dbo.TBL_ITENS_DO_CARRINHO WHERE CD_ITENS_DO_CARRINHO = @CD_ITENS_DO_CARRINHO
+
+END
+GO
+
+

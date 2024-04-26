@@ -21,13 +21,13 @@ namespace Baker_API.Services
             }
         }
 
-        public void Delete(Guid CD_USUARIO, int CD_PRODUTO)
+        public void Delete(int CD_ITENS_DO_CARRINHO)
         {
             try
             {
                 Repository.CarrinhoRepository rep = new Repository.CarrinhoRepository();
 
-                rep.Delete(CD_USUARIO, CD_PRODUTO);
+                rep.Delete(CD_ITENS_DO_CARRINHO);
             }
             catch (Exception)
             {
