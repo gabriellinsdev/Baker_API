@@ -18,5 +18,7 @@ namespace Baker_API.Views
         public IFormFile FF_IMAGEM { get; set; }
         [DataMember]
         public byte[]? VB_IMAGEM { get; set; }
+        [DataMember]
+        public string? ALIMENTOS_RESTRITOS { get; set; }
     }
 }

@@ -9,5 +9,6 @@
         public decimal VL_PRECO { get; set; }
         public IFormFile FF_IMAGEM { get; set; }
         public byte[]? VB_IMAGEM { get; set; }
+        public string? ALIMENTOS_RESTRITOS { get; set; }
     }
 }

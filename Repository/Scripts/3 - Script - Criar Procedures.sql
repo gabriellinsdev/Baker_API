@@ -12,19 +12,21 @@ CREATE OR ALTER PROCEDURE dbo.spINSProduto
 	@DS_PRODUTO         VARCHAR(300),
 	@VL_PRECO           DECIMAL(6,2),
     @VB_IMAGEM          VARBINARY(MAX),
-    @PRODUTOS_RESTRITOS XML = NULL      -- Exemplo: 
-                                        --'<AlimentoRestrito>
-                                        --     <Item>
-                                        --         <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
-                                        --     </Item>
-                                        --     <Item>
-                                        --         <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
-                                        --     </Item>
-                                        --</AlimentoRestrito>'
+    @ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
+                                         --'<ALIMENTOSRESTRITOS>
+                                         --    <ITEM>
+                                         --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
+                                         --    </ITEM>
+                                         --    <ITEM>
+                                         --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
+                                         --    </ITEM>
+                                        --</ALIMENTOSRESTRITOS>'
 
 AS
 BEGIN
 
+
+    -- CADASTRO DE PODUTOS
     INSERT INTO dbo.TBL_PRODUTOS
     (
 		CD_USUARIO,
@@ -48,12 +50,12 @@ BEGIN
     SET @CD_PRODUTO = SCOPE_IDENTITY()
 
 
-    -- CADASTRAR PRODUTO COM ALIMENTOS RESTRITIVOS
-    IF (@PRODUTOS_RESTRITOS IS NOT NULL)
+    -- CADASTRAR PRODUTO E SEU ALIMENTOS RESTRITIVOS
+    IF (@ALIMENTOS_RESTRITOS IS NOT NULL)
     BEGIN
 
         declare @hDoc AS INT    
-        exec    sp_xml_preparedocument @hDoc OUTPUT, @PRODUTOS_RESTRITOS
+        exec    sp_xml_preparedocument @hDoc OUTPUT, @ALIMENTOS_RESTRITOS
 
         ;WITH Dados AS  
         (  
@@ -61,7 +63,7 @@ BEGIN
 	                CD_PRODUTO = @CD_PRODUTO,
                     CD_ALIMENTO_RESTRITO
     
-            FROM OPENXML(@hDoc, 'AlimentoRestrito\Item')  
+            FROM OPENXML(@hDoc, '/ALIMENTOSRESTRITOS/ITEM')  
             WITH  
             (     
                 CD_ALIMENTO_RESTRITO INT 'CD_ALIMENTO_RESTRITO'
@@ -92,15 +94,15 @@ CREATE OR ALTER PROCEDURE dbo.spUPDProduto
 	@DS_PRODUTO VARCHAR(300),
 	@VL_PRECO DECIMAL(6,2),
     @VB_IMAGEM VARBINARY(MAX),
-    @PRODUTOS_RESTRITOS XML = NULL      -- Exemplo: 
-                                        --'<AlimentoRestrito>
-                                        --     <Item>
-                                        --         <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
-                                        --     </Item>
-                                        --     <Item>
-                                        --         <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
-                                        --     </Item>
-                                        --</AlimentoRestrito>'
+    @ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
+                                         --'<ALIMENTOSRESTRITOS>
+                                         --    <ITEM>
+                                         --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
+                                         --    </ITEM>
+                                         --    <ITEM>
+                                         --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
+                                         --    </ITEM>
+                                        --</ALIMENTOSRESTRITOS>'
 
 AS
 BEGIN
@@ -120,12 +122,12 @@ BEGIN
         CD_PRODUTO = @CD_Produto
 
 
-    -- CADASTRAR PRODUTO COM ALIMENTOS RESTRITIVOS
-    IF (@PRODUTOS_RESTRITOS IS NOT NULL)
+     -- CADASTRAR PRODUTO E SEU ALIMENTOS RESTRITIVOS
+    IF (@ALIMENTOS_RESTRITOS IS NOT NULL)
     BEGIN
 
         declare @hDoc AS INT    
-        exec    sp_xml_preparedocument @hDoc OUTPUT, @PRODUTOS_RESTRITOS
+        exec    sp_xml_preparedocument @hDoc OUTPUT, @ALIMENTOS_RESTRITOS
 
         ;WITH Dados AS  
         (  
@@ -133,7 +135,7 @@ BEGIN
 	                CD_PRODUTO = @CD_PRODUTO,
                     CD_ALIMENTO_RESTRITO
     
-            FROM OPENXML(@hDoc, 'AlimentoRestrito\Item')  
+            FROM OPENXML(@hDoc, '/ALIMENTOSRESTRITOS/ITEM')  
             WITH  
             (     
                 CD_ALIMENTO_RESTRITO INT 'CD_ALIMENTO_RESTRITO'
@@ -162,6 +164,9 @@ CREATE OR ALTER PROCEDURE dbo.spDELProduto
 AS
 BEGIN
 
+
+    -- A EXLUSÃO DO PRODUTO SERÁ IDENTIFICADO PELA COLUNA BO_CANCELADO, E NÃO EXLCUIDO DA TABELA, 
+    -- ASSIM EVITA A PERDA DO HITÓRICO DESSE PRODUTO DE COMPRAS DESTES PRODUTO
     UPDATE  dbo.TBL_PRODUTOS
     SET     BO_CANCELADO = 1
 	WHERE   CD_PRODUTO = @CD_Produto
@@ -178,6 +183,7 @@ CREATE OR ALTER PROCEDURE dbo.spLSTProduto
 AS
 BEGIN
 
+    -- LISTAR PRODUTOS POR PADEIRO
 	SELECT
 		CD_PRODUTO,
 		CD_USUARIO,
@@ -204,6 +210,8 @@ CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros
 AS
 BEGIN
 
+
+    -- ESTA CTE "ALIMENTOS", RETORNA UMA TABELA COM TODOS OS CLIENTES E QUAIS ALIMENTOS RESTRITIVOS ELE UTILIZA NOS PRODUTOS DELE.
     ;WITH ALIMENTOS AS
     (
         SELECT  *                
@@ -213,17 +221,24 @@ BEGIN
                             P.CD_USUARIO,
                             AR.DS_ALIMENTO, 
                             CD_ALIMENTO_RESTRITO = CASE WHEN AR.CD_ALIMENTO_RESTRITO IS NOT NULL THEN 1 ELSE 0 END
+
                     FROM    dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS   PA  WITH (NOLOCK)
                             INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR  WITH (NOLOCK)
                             ON  PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
                             INNER JOIN dbo.TBL_PRODUTOS  P  WITH (NOLOCK)
                             ON  P.CD_PRODUTO = PA.CD_PRODUTO
                 ) AS Alimentos
+    
+        -- ESTE PIVOT CRIA AS COLUNAS DE CADA ALIMENTO RESTRITIVO NA TABELA (CTE) "ALIMENTOS", 
+        -- CASO NECESSITE CADASTRAR UM NOVO ALIMENTO RESRTRITIVO, DEVE-SE INCLUIR ELE NA LISTA DA SENTENÇA "FOR" 
+        -- E NA SUA TABELA DE DOMINIO (dbo.TBL_ALIMENTOS_RESTRITOS).
         PIVOT   (
                     SUM(Alimentos.CD_ALIMENTO_RESTRITO) 
                     FOR Alimentos.DS_ALIMENTO IN ([GLUTEN], [LACTOSE], [LOW-CARB], [ARTESANAL])
                 ) AS PivotTable      
     )
+    -- RETORNA OS DADOS DOS PADEIROS CADASTRADOS PARA UMA DETERMINADA CIDADE OU TODAS E QUAIS ALIMENTOS RESTRITIVOS 
+    -- CADA PADEIRO UTUILIZA NOS SEUS PRODUTOS.
 	SELECT
             US.CD_USUARIO,
             US.NM_USUARIO,
@@ -250,7 +265,7 @@ BEGIN
 
     WHERE
             (UPPER(US.NM_CIDADE) = UPPER(@NM_CIDADE) OR @NM_CIDADE IS NULL)
-	AND		LEN(TRIM(US.CD_CPF_CNPJ)) = 14		-- 14 caracteres define ser um CNPJ
+	AND		LEN(TRIM(US.CD_CPF_CNPJ)) = 14		-- 14 caracteres define ser um CNPJ (PJ) e 11 caracteres define ser um CPF (PF)
 
     GROUP BY
             US.CD_USUARIO,
@@ -302,22 +317,24 @@ BEGIN
         INNER JOIN dbo.TBL_USUARIOS         CL  WITH (NOLOCK)
         ON  PE.CD_CLIENTE = CL.CD_USUARIO
 
-        INNER JOIN dbo.TBL_USUARIOS PD  WITH (NOLOCK)
+        INNER JOIN dbo.TBL_USUARIOS         PD  WITH (NOLOCK)
         ON  PE.CD_PADEIRO = PD.CD_USUARIO
 
+
+        --  CALCULA O VALOR TOTAL DOS PRODUTOS, POR PEDIDO
         OUTER APPLY
         (
             SELECT  
                     P.CD_PEDIDO,
                     VL_TOTAL = SUM(R.VL_PRECO)
-            FROM
-		            dbo.TBL_PEDIDOS P  WITH (NOLOCK)
+            
+            FROM    dbo.TBL_PEDIDOS                     P  WITH (NOLOCK)
 
-                INNER JOIN dbo.TBL_ITENS_DO_PEDIDO  I  WITH (NOLOCK)
-                ON  P.CD_PEDIDO = I.CD_PEDIDO
+                    INNER JOIN dbo.TBL_ITENS_DO_PEDIDO  I  WITH (NOLOCK)
+                    ON  P.CD_PEDIDO = I.CD_PEDIDO
 
-                INNER JOIN dbo.TBL_PRODUTOS         R  WITH (NOLOCK)
-                ON  I.CD_PRODUTO = R.CD_PRODUTO
+                    INNER JOIN dbo.TBL_PRODUTOS         R  WITH (NOLOCK)
+                    ON  I.CD_PRODUTO = R.CD_PRODUTO
             WHERE
                     P.CD_PEDIDO = PE.CD_PEDIDO
             GROUP BY
@@ -342,7 +359,7 @@ CREATE OR ALTER PROCEDURE dbo.spINSCarrinho
 AS    
 BEGIN    
 
-    -- CADASTRAR CARRINHO
+    -- CADASTRAR UM CARRINHO POR CLIENTE
     ;WITH DADOS AS
     (
         SELECT  CD_USUARIO = @CD_USUARIO
@@ -363,6 +380,8 @@ BEGIN
     FROM    dbo.TBL_CARRINHOS CA WITH (NOLOCK)
     WHERE   CA.CD_USUARIO = @CD_USUARIO
 
+
+    -- SALVA O PRODUTO PARA O CARRINHO/CLIENTE, CASO O PRODUTO JÁ ESTEJA CADASTRADO SERÁ ATUALIZADO APENAS A QUANTIDADE DO PRODUTO
     ;WITH Dados AS  
     (  
         SELECT  
@@ -426,6 +445,7 @@ CREATE OR ALTER PROCEDURE dbo.spDELCarrinho
 AS    
 BEGIN  
 
+    -- EXCLUI DA TABELA OS PRODUTOS DO CARRINHO DO CLIENTE
     DELETE FROM dbo.TBL_ITENS_DO_CARRINHO WHERE CD_ITENS_DO_CARRINHO = @CD_ITENS_DO_CARRINHO
 
 END
