@@ -6,13 +6,13 @@ GO
 -- INSERIR PRODUTOS
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spINSProduto
-	@CD_PRODUTO         INT,
-	@CD_USUARIO         UNIQUEIDENTIFIER,
-	@NM_PRODUTO         VARCHAR(100), 
-	@DS_PRODUTO         VARCHAR(300),
-	@VL_PRECO           DECIMAL(6,2),
-    @VB_IMAGEM          VARBINARY(MAX),
-    @ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
+	@CD_PRODUTO          INT,
+	@CD_USUARIO          UNIQUEIDENTIFIER,
+	@NM_PRODUTO          VARCHAR(100), 
+	@DS_PRODUTO          VARCHAR(300),
+	@VL_PRECO            DECIMAL(6,2),
+    @VB_IMAGEM           VARBINARY(MAX),
+    @ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL      -- Exemplo: 
                                          --'<ALIMENTOSRESTRITOS>
                                          --    <ITEM>
                                          --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
