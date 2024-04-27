@@ -93,6 +93,16 @@ values
 (@CD_USUARIO,'Pão de Leite', NULL, 3.00),
 (@CD_USUARIO,'Pão Francês', NULL,0.80),
 (@CD_USUARIO,'Pão Italiano', NULL,13.50)
+
+
+SELECT  @CD_USUARIO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'CLAUDIO (PADEIRO)'
+
+insert into dbo.TBL_PRODUTOS
+(CD_USUARIO,NM_PRODUTO,DS_PRODUTO,VL_PRECO)
+values
+(@CD_USUARIO,'Rosquinha', NULL,6.50),
+(@CD_USUARIO,'Brioche', NULL,17.90),
+(@CD_USUARIO,'Croissant', NULL,7.20)
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -136,7 +146,7 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
             FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
             WHERE   R.DS_ALIMENTO IN ('LOW-CARB')
         ) A
-WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)')
+WHERE   U.NM_USUARIO IN ('GABRIEL (PADEIRO)','DIOGO (PADEIRO)','CLAUDIO (PADEIRO)')
 AND     P.NM_PRODUTO IN ('Rosquinha', 'Brioche')
 UNION
 SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
@@ -151,7 +161,19 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         ) A
 WHERE   U.NM_USUARIO IN ('DIOGO (PADEIRO)')
 AND     P.NM_PRODUTO IN ('Pão de Leite', 'Pão Italiano')
-
+UNION
+SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
+FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
+        INNER JOIN dbo.TBL_PRODUTOS P WITH (NOLOCK) 
+        ON  P.CD_USUARIO = U.CD_USUARIO
+        OUTER APPLY
+        (
+            SELECT  R.CD_ALIMENTO_RESTRITO 
+            FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
+            WHERE   R.DS_ALIMENTO IN ('LOW-CARB')
+        ) A
+WHERE   U.NM_USUARIO IN ('CLAUDIO (PADEIRO)')
+AND     P.NM_PRODUTO IN ('Croissant')
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- CADASTRO DE PEDIDOS
