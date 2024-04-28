@@ -15,5 +15,10 @@
         public double CD_LATITUDE { get; set; }
         public double CD_LONGITUDE { get; set; }
         public string DS_MENSAGEM { get; set; }
+
+        public bool GLUTEN { get; set; }
+        public bool LACTOSE { get; set; }
+        public bool LOW_CARB { get; set; }
+        public bool ARTESANAL { get; set; }
     }
 }

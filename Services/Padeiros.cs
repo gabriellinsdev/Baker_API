@@ -146,6 +146,11 @@ namespace Baker_API.Services
             obj.CD_LATITUDE = padeiro.CD_LATITUDE;
             obj.CD_LONGITUDE = padeiro.CD_LONGITUDE;
 
+            obj.GLUTEN = padeiro.GLUTEN;
+            obj.LACTOSE = padeiro.LACTOSE;
+            obj.LOW_CARB = padeiro.LOW_CARB;
+            obj.ARTESANAL = padeiro.ARTESANAL;
+
             return obj;
         }
 
@@ -165,6 +170,11 @@ namespace Baker_API.Services
             obj.CD_CPF_CNPJ = padeiro.CD_CPF_CNPJ;
             obj.CD_LATITUDE = padeiro.CD_LATITUDE;
             obj.CD_LONGITUDE = padeiro.CD_LONGITUDE;
+
+            obj.GLUTEN = padeiro.GLUTEN;
+            obj.LACTOSE = padeiro.LACTOSE;
+            obj.LOW_CARB = padeiro.LOW_CARB;
+            obj.ARTESANAL = padeiro.ARTESANAL;
 
             return obj;
         }

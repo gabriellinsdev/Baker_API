@@ -7,8 +7,8 @@ namespace Baker_API.Controllers
     public class LocalizacaoController : Controller
     {
 
-        [HttpGet("LocationNearby")]
-        public IActionResult LocationBaker(string CEP_CLIENTE, int QT_LINHAS)
+        [HttpGet("ListarPadeirosProximos")]
+        public IActionResult ListarPadeirosProximos(string CEP_CLIENTE, int QT_LINHAS)
         {
             GoogleMaps maps = new GoogleMaps();
             RetornoView retorno = new RetornoView();

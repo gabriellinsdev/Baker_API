@@ -31,5 +31,14 @@ namespace Baker_API.Views
         [DataMember]
         public string DS_MENSAGEM { get; set; }
 
+        [DataMember]
+        public bool GLUTEN { get; set; }
+        [DataMember]
+        public bool LACTOSE { get; set; }
+        [DataMember]
+        public bool LOW_CARB { get; set; }
+        [DataMember]
+        public bool ARTESANAL { get; set; }
+
     }
 }
