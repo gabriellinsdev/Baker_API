@@ -18,7 +18,7 @@ namespace Baker_API.Repository
                 produto.DS_PRODUTO,
                 produto.VL_PRECO,
                 produto.VB_IMAGEM,
-                produto.ALIMENTOS_RESTRITOS
+                produto.LS_ALIMENTOS_RESTRITOS
             });
         }
 

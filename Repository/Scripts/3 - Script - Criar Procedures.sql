@@ -12,7 +12,7 @@ CREATE OR ALTER PROCEDURE dbo.spINSProduto
 	@DS_PRODUTO          VARCHAR(300),
 	@VL_PRECO            DECIMAL(6,2),
     @VB_IMAGEM           VARBINARY(MAX),
-    @ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL      -- Exemplo: 
+    @LS_ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL      -- Exemplo: 
                                          --'<ALIMENTOSRESTRITOS>
                                          --    <ITEM>
                                          --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
@@ -34,7 +34,12 @@ BEGIN
 		DS_PRODUTO,
 		VL_PRECO,
         BO_CANCELADO,
-        VB_IMAGEM
+        VB_IMAGEM,
+        VL_TOTAL,
+        NM_ESTADO,
+        NM_CIDADE,
+        DS_ENDERECO,
+        CD_CEP
     )
     VALUES
     (
@@ -43,7 +48,12 @@ BEGIN
 		@DS_PRODUTO,
 		@VL_PRECO,
         0,
-        @VB_IMAGEM
+        @VB_IMAGEM,
+        0.00,
+        '',
+        '',
+        '',
+        ''
     )
 
     -- ADQUIRE O ID DO PRODUTO QUE ACABOU DE SER CADASTRADO 
@@ -51,11 +61,11 @@ BEGIN
 
 
     -- CADASTRAR PRODUTO E SEU ALIMENTOS RESTRITIVOS
-    IF (@ALIMENTOS_RESTRITOS IS NOT NULL)
+    IF (@LS_ALIMENTOS_RESTRITOS IS NOT NULL)
     BEGIN
 
         declare @hDoc AS INT    
-        exec    sp_xml_preparedocument @hDoc OUTPUT, @ALIMENTOS_RESTRITOS
+        exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS
 
         ;WITH Dados AS  
         (  
@@ -94,7 +104,7 @@ CREATE OR ALTER PROCEDURE dbo.spUPDProduto
 	@DS_PRODUTO VARCHAR(300),
 	@VL_PRECO DECIMAL(6,2),
     @VB_IMAGEM VARBINARY(MAX),
-    @ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
+    @LS_ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
                                          --'<ALIMENTOSRESTRITOS>
                                          --    <ITEM>
                                          --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
@@ -123,11 +133,11 @@ BEGIN
 
 
      -- CADASTRAR PRODUTO E SEU ALIMENTOS RESTRITIVOS
-    IF (@ALIMENTOS_RESTRITOS IS NOT NULL)
+    IF (@LS_ALIMENTOS_RESTRITOS IS NOT NULL)
     BEGIN
 
         declare @hDoc AS INT    
-        exec    sp_xml_preparedocument @hDoc OUTPUT, @ALIMENTOS_RESTRITOS
+        exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS
 
         ;WITH Dados AS  
         (  
@@ -179,23 +189,47 @@ GO
 -- LISTAR PRODUTOS POR PADEIRO
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spLSTProduto
-    @CD_USUARIO UNIQUEIDENTIFIER = null
+    @CD_USUARIO UNIQUEIDENTIFIER
 AS
 BEGIN
 
-    -- LISTAR PRODUTOS POR PADEIRO
+	-- ESTA CTE RETORNA TODOS OS PRODUTOS DO PADEIRO, E SEUS RESPACTIVOS ALIMENTOS RESTRITOS EM FORMATO XML
+    ;WITH ALIMENTOS AS
+    (
+		SELECT
+				P.CD_USUARIO,
+				P.CD_PRODUTO,
+				(
+					SELECT	AR.CD_ALIMENTO_RESTRITO AS 'CD_ALIMENTO_RESTRITO'
+					FROM	dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK)
+							INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR WITH (NOLOCK) ON PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
+					WHERE	P.CD_PRODUTO = PA.CD_PRODUTO
+					FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
+				) AS 'LS_ALIMENTOS_RESTRITOS'
+		FROM	dbo.TBL_PRODUTOS P WITH (NOLOCK)
+				INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK) 
+				ON P.CD_PRODUTO = PA.CD_PRODUTO
+		GROUP BY
+				P.CD_USUARIO, P.CD_PRODUTO
+  
+    )    
 	SELECT
-		CD_PRODUTO,
-		CD_USUARIO,
-		NM_PRODUTO, 
-		DS_PRODUTO,
-		VL_PRECO,
-        VB_IMAGEM
-	FROM
-		dbo.TBL_PRODUTOS PD WITH (NOLOCK)
+			PR.CD_PRODUTO,
+			PR.CD_USUARIO,
+			PR.NM_PRODUTO, 
+			PR.DS_PRODUTO,
+			PR.VL_PRECO,
+			PR.VB_IMAGEM,
+			AL.LS_ALIMENTOS_RESTRITOS
+		
+    FROM    dbo.TBL_PRODUTOS PR  WITH (NOLOCK)
+
+            LEFT JOIN   ALIMENTOS       AL
+            ON  AL.CD_USUARIO = PR.CD_USUARIO
+			AND AL.CD_PRODUTO = PR.CD_PRODUTO
 	WHERE
-		(CD_USUARIO = @CD_USUARIO OR @CD_USUARIO is null)
-    AND BO_CANCELADO = 0
+			(PR.CD_USUARIO = @CD_USUARIO OR @CD_USUARIO is null)
+    AND		PR.BO_CANCELADO = 0
 
 END
 GO

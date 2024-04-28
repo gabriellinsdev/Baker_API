@@ -182,16 +182,16 @@ SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_US
 SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'JOÃO (CLIENTE)'
 
 insert into dbo.TBL_PEDIDOS
-(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO, VL_TOTAL,NM_ESTADO,NM_CIDADE,DS_ENDERECO,CD_CEP)
 values
-(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null,0,'','','','')
 
 SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'PEDRO (CLIENTE)'
 
 insert into dbo.TBL_PEDIDOS
-(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO, VL_TOTAL,NM_ESTADO,NM_CIDADE,DS_ENDERECO,CD_CEP)
 values
-(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null,0,'','','','')
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -199,16 +199,16 @@ SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_US
 SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'JOÃO (CLIENTE)'
 
 insert into dbo.TBL_PEDIDOS
-(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO, VL_TOTAL,NM_ESTADO,NM_CIDADE,DS_ENDERECO,CD_CEP)
 values
-(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null,0,'','','','')
 
 SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'ROGERIO (CLIENTE)'
 
 insert into dbo.TBL_PEDIDOS
-(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO, VL_TOTAL,NM_ESTADO,NM_CIDADE,DS_ENDERECO,CD_CEP)
 values
-(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null,0,'','','','')
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -216,9 +216,9 @@ SELECT  @CD_PADEIRO = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_US
 SELECT  @CD_CLIENTE = CD_USUARIO FROM dbo.TBL_USUARIOS WITH (NOLOCK) WHERE NM_USUARIO = 'ROGERIO (CLIENTE)'
 
 insert into dbo.TBL_PEDIDOS
-(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO)
+(CD_PEDIDO, CD_PADEIRO, CD_CLIENTE, DT_PEDIDO, DS_OBSERVACAO, VL_TOTAL,NM_ESTADO,NM_CIDADE,DS_ENDERECO,CD_CEP)
 values
-(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null)
+(newid(), @CD_PADEIRO, @CD_CLIENTE, getdate(), null,0,'','','','')
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 
