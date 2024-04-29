@@ -47,21 +47,21 @@ namespace Baker_API.Services
             }
         }
 
-        public List<ProdutoView> List(Guid CD_USUARIO)
+        public List<ProdutoDetailView> List(Guid CD_USUARIO)
         {
             try
             {
                 Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
 
                 List<ProdutoModel> lista = rep.List(CD_USUARIO);
-                List<ProdutoView> ListaProdutos = new List<ProdutoView>();
+                List<ProdutoDetailView> ListaProdutos = new List<ProdutoDetailView>();
 
                 foreach (ProdutoModel produtoModel in lista)
                 {
-                    ProdutoView model = new ProdutoView();
-                    model = Converter(produtoModel);
+                    ProdutoDetailView view = new ProdutoDetailView();
+                    view = Converter(produtoModel);
 
-                    ListaProdutos.Add(model);
+                    ListaProdutos.Add(view);
                 }
 
                 if (ListaProdutos.Count() == 0)
@@ -94,16 +94,15 @@ namespace Baker_API.Services
             return obj;
         }
 
-        private ProdutoView Converter(ProdutoModel produto)
+        private ProdutoDetailView Converter(ProdutoModel produto)
         {
-            ProdutoView obj = new ProdutoView();
+            ProdutoDetailView obj = new ProdutoDetailView();
 
             obj.CD_PRODUTO = produto.CD_PRODUTO;
             obj.DS_PRODUTO = produto.DS_PRODUTO;
             obj.NM_PRODUTO = produto.NM_PRODUTO;
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
-            obj.FF_IMAGEM = produto.FF_IMAGEM;
             obj.VB_IMAGEM = produto.VB_IMAGEM;
             obj.LS_ALIMENTOS_RESTRITOS = produto.LS_ALIMENTOS_RESTRITOS;
 
