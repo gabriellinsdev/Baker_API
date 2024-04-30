@@ -10,6 +10,6 @@ namespace Baker_API.Interfaces
 
         public void Delete(int idProduto);
 
-        public List<ProdutoView> List(Guid usuario);
+        public List<ProdutoDetailView> List(Guid usuario);
     }
 }
