@@ -8,7 +8,7 @@ namespace Baker_API.Controllers
     {
 
         [HttpGet("ListarPadeirosProximos")]
-        public IActionResult ListarPadeirosProximos(string CEP_CLIENTE, int QT_LINHAS)
+        public IActionResult ListarPadeirosProximos(string CEP_CLIENTE, int QT_LINHAS, string? LS_ALIMENTOS_RESTRITOS = null)
         {
             GoogleMaps maps = new GoogleMaps();
             RetornoView retorno = new RetornoView();
@@ -25,8 +25,8 @@ namespace Baker_API.Controllers
                 }
 
                 // Lista de padeiros por Cidade
-                Padeiros padeiro = new  Padeiros();
-                List<PadeiroView> lstPadeiros  = padeiro.ListarPadeiros(localizacao.NM_CIDADE);
+                Padeiros padeiro = new Padeiros();
+                List<PadeiroView> lstPadeiros = padeiro.ListarPadeiros(localizacao.NM_CIDADE, LS_ALIMENTOS_RESTRITOS);
 
 
                 if (lstPadeiros == null || lstPadeiros.Count == 0)

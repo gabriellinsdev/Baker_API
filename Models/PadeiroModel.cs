@@ -1,4 +1,6 @@
-﻿namespace Baker_API.Models
+﻿using System.Runtime.Serialization;
+
+namespace Baker_API.Models
 {
     public class PadeiroModel
     {
@@ -15,10 +17,6 @@
         public double CD_LATITUDE { get; set; }
         public double CD_LONGITUDE { get; set; }
         public string DS_MENSAGEM { get; set; }
-
-        public bool GLUTEN { get; set; }
-        public bool LACTOSE { get; set; }
-        public bool LOW_CARB { get; set; }
-        public bool ARTESANAL { get; set; }
+        public string? LS_ALIMENTOS_RESTRITOS { get; set; }
     }
 }

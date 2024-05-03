@@ -230,41 +230,50 @@ GO
 -- LISTAR LOCALIZACAO DOS PADEIROS
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros
-    @NM_CIDADE  VARCHAR(50) = NULL
+    @NM_CIDADE  VARCHAR(50),
+    @LS_ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
+                                         --'<ALIMENTOSRESTRITOS>
+                                         --    <ITEM>
+                                         --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
+                                         --    </ITEM>
+                                         --    <ITEM>
+                                         --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
+                                         --    </ITEM>
+                                        --</ALIMENTOSRESTRITOS>'
 
 AS
 BEGIN
 
+	declare @hDoc AS INT    
+    exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS
 
-    -- ESTA CTE "ALIMENTOS", RETORNA UMA TABELA COM TODOS OS CLIENTES E QUAIS ALIMENTOS RESTRITIVOS ELE UTILIZA NOS PRODUTOS DELE.
-    ;WITH ALIMENTOS AS
-    (
-        SELECT  *                
-        FROM    (
-
-                    SELECT  
-                            P.CD_USUARIO,
-                            AR.DS_ALIMENTO, 
-                            CD_ALIMENTO_RESTRITO = CASE WHEN AR.CD_ALIMENTO_RESTRITO IS NOT NULL THEN 1 ELSE 0 END
-
-                    FROM    dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS   PA  WITH (NOLOCK)
-                            INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR  WITH (NOLOCK)
-                            ON  PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
-                            INNER JOIN dbo.TBL_PRODUTOS  P  WITH (NOLOCK)
-                            ON  P.CD_PRODUTO = PA.CD_PRODUTO
-                ) AS Alimentos
+    ;WITH RESTRITOS AS
+	(
+		SELECT  
+				CD_ALIMENTO_RESTRITO
     
-        -- ESTE PIVOT CRIA AS COLUNAS DE CADA ALIMENTO RESTRITIVO NA TABELA (CTE) "ALIMENTOS", 
-        -- CASO NECESSITE CADASTRAR UM NOVO ALIMENTO RESRTRITIVO, DEVE-SE INCLUIR ELE NA LISTA DA SENTENÇA "FOR" 
-        -- E NA SUA TABELA DE DOMINIO (dbo.TBL_ALIMENTOS_RESTRITOS).
-        PIVOT   (
-                    SUM(Alimentos.CD_ALIMENTO_RESTRITO) 
-                    FOR Alimentos.DS_ALIMENTO IN ([GLUTEN], [LACTOSE], [LOW-CARB], [ARTESANAL])
-                ) AS PivotTable      
-    )
+		FROM	OPENXML(@hDoc, '/ALIMENTOSRESTRITOS/ITEM')  
+		WITH  
+		(     
+			CD_ALIMENTO_RESTRITO INT 'CD_ALIMENTO_RESTRITO'
+		)
+	)
+	, PADEIROS AS
+    (
+        SELECT  DISTINCT
+                P.CD_USUARIO
+
+        FROM    dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS   PA  WITH (NOLOCK)
+					                    
+				INNER JOIN dbo.TBL_PRODUTOS  P  WITH (NOLOCK)
+                ON  P.CD_PRODUTO = PA.CD_PRODUTO
+
+		WHERE	PA.CD_ALIMENTO_RESTRITO IN (SELECT CD_ALIMENTO_RESTRITO FROM RESTRITOS) OR @LS_ALIMENTOS_RESTRITOS IS NULL
+
+   )
     -- RETORNA OS DADOS DOS PADEIROS CADASTRADOS PARA UMA DETERMINADA CIDADE OU TODAS E QUAIS ALIMENTOS RESTRITIVOS 
     -- CADA PADEIRO UTUILIZA NOS SEUS PRODUTOS.
-	SELECT
+	SELECT	DISTINCT
             US.CD_USUARIO,
             US.NM_USUARIO,
             US.DS_EMAIL,
@@ -274,35 +283,15 @@ BEGIN
             US.DS_ENDERECO,
             US.CD_CEP,
             US.CD_SENHA,
-            US.CD_CPF_CNPJ,
-            [GLUTEN]    = CASE WHEN SUM(ISNULL(AL.[GLUTEN],0))    > 0 THEN 1 ELSE 0 END,
-            [LACTOSE]   = CASE WHEN SUM(ISNULL(AL.[LACTOSE],0))   > 0 THEN 1 ELSE 0 END,
-            [LOW_CARB]  = CASE WHEN SUM(ISNULL(AL.[LOW-CARB],0))  > 0 THEN 1 ELSE 0 END,
-            [ARTESANAL] = CASE WHEN SUM(ISNULL(AL.[ARTESANAL],0)) > 0 THEN 1 ELSE 0 END    
+            US.CD_CPF_CNPJ  
 
-    FROM    dbo.TBL_USUARIOS            US  WITH (NOLOCK)
-
-            INNER JOIN dbo.TBL_PRODUTOS PR  WITH (NOLOCK)
-            ON  US.CD_USUARIO = PR.CD_USUARIO
-
-            LEFT JOIN   ALIMENTOS       AL
-            ON  AL.CD_USUARIO = PR.CD_USUARIO
-
+    FROM    PADEIROS					PD
+	
+			INNER JOIN dbo.TBL_USUARIOS	US  WITH (NOLOCK)
+			ON	PD.CD_USUARIO = US.CD_USUARIO
     WHERE
             (UPPER(US.NM_CIDADE) = UPPER(@NM_CIDADE) OR @NM_CIDADE IS NULL)
 	AND		LEN(TRIM(US.CD_CPF_CNPJ)) = 14		-- 14 caracteres define ser um CNPJ (PJ) e 11 caracteres define ser um CPF (PF)
-
-    GROUP BY
-            US.CD_USUARIO,
-            US.NM_USUARIO,
-            US.DS_EMAIL,
-            US.DS_TELEFONE,
-            US.NM_ESTADO,
-            US.NM_CIDADE,
-            US.DS_ENDERECO,
-            US.CD_CEP,
-            US.CD_SENHA,
-            US.CD_CPF_CNPJ
 
 END
 GO

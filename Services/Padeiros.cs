@@ -6,14 +6,14 @@ namespace Baker_API.Services
 {
     public class Padeiros : IPadeiros
     {
-        public List<PadeiroView> ListarPadeiros(string NM_CIDADE)
+        public List<PadeiroView> ListarPadeiros(string NM_CIDADE, string? LS_ALIMENTOS_RESTRITOS = null)
         {
             try
             {
                 Repository.PadeiroRepository rep = new Repository.PadeiroRepository();
 
                 List<PadeiroView> ListaPadeiros = new List<PadeiroView>();
-                List<PadeiroModel> lista = rep.List(NM_CIDADE);
+                List<PadeiroModel> lista = rep.List(NM_CIDADE, LS_ALIMENTOS_RESTRITOS);
 
                 foreach (PadeiroModel Padeiro in lista)
                 {
@@ -145,11 +145,7 @@ namespace Baker_API.Services
             obj.CD_CPF_CNPJ = padeiro.CD_CPF_CNPJ;
             obj.CD_LATITUDE = padeiro.CD_LATITUDE;
             obj.CD_LONGITUDE = padeiro.CD_LONGITUDE;
-
-            obj.GLUTEN = padeiro.GLUTEN;
-            obj.LACTOSE = padeiro.LACTOSE;
-            obj.LOW_CARB = padeiro.LOW_CARB;
-            obj.ARTESANAL = padeiro.ARTESANAL;
+            obj.LS_ALIMENTOS_RESTRITOS = padeiro.LS_ALIMENTOS_RESTRITOS;
 
             return obj;
         }
@@ -170,11 +166,7 @@ namespace Baker_API.Services
             obj.CD_CPF_CNPJ = padeiro.CD_CPF_CNPJ;
             obj.CD_LATITUDE = padeiro.CD_LATITUDE;
             obj.CD_LONGITUDE = padeiro.CD_LONGITUDE;
-
-            obj.GLUTEN = padeiro.GLUTEN;
-            obj.LACTOSE = padeiro.LACTOSE;
-            obj.LOW_CARB = padeiro.LOW_CARB;
-            obj.ARTESANAL = padeiro.ARTESANAL;
+            obj.LS_ALIMENTOS_RESTRITOS = padeiro.LS_ALIMENTOS_RESTRITOS;
 
             return obj;
         }
