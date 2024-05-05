@@ -1,4 +1,5 @@
 ﻿using Baker_API.Domains;
+using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Baker_API.Repository
@@ -53,6 +54,16 @@ namespace Baker_API.Repository
             {
                 CD_USUARIO
             });
+
+        }
+
+        public ProdutoModel GetProduct(int CD_PRODUTO)
+        {
+            Helper helper = new Helper();
+            return helper.ConvertDataTable<ProdutoModel>(helper.ExecuteTable(dbName, "dbo.spSELProduto", new
+            {
+                CD_PRODUTO
+            }));
 
         }
     }

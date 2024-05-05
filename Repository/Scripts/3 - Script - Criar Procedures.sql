@@ -174,6 +174,55 @@ BEGIN
 END
 GO
 
+--------------------------------------------------------------------------------------------------------------------------------------------
+-- SELECIONAR DADOS DO PRODUTO
+--------------------------------------------------------------------------------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.spSELProduto
+    @CD_PRODUTO INT
+AS
+BEGIN
+
+	-- ESTA CTE RETORNA TODOS OS PRODUTOS DO PADEIRO, E SEUS RESPACTIVOS ALIMENTOS RESTRITOS EM FORMATO XML
+    ;WITH ALIMENTOS AS
+    (
+		SELECT
+				--P.CD_USUARIO,
+				P.CD_PRODUTO,
+				(
+					SELECT	CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO,
+							DS_ALIMENTO			 = AR.DS_ALIMENTO
+					FROM	dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK)
+							INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR WITH (NOLOCK) ON PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
+					WHERE	P.CD_PRODUTO = PA.CD_PRODUTO
+					FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
+				) AS 'LS_ALIMENTOS_RESTRITOS'
+		FROM	dbo.TBL_PRODUTOS P WITH (NOLOCK)
+				INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK) 
+				ON P.CD_PRODUTO = PA.CD_PRODUTO
+		GROUP BY
+				P.CD_USUARIO, P.CD_PRODUTO
+  
+    )    
+	SELECT
+			PR.CD_PRODUTO,
+			PR.NM_PRODUTO, 
+			PR.DS_PRODUTO,
+			PR.VL_PRECO,
+			PR.VB_IMAGEM,
+			AL.LS_ALIMENTOS_RESTRITOS
+		
+    FROM    dbo.TBL_PRODUTOS PR  WITH (NOLOCK)
+
+            LEFT JOIN   ALIMENTOS       AL
+			ON	AL.CD_PRODUTO = PR.CD_PRODUTO
+
+	WHERE
+			(PR.CD_PRODUTO = @CD_PRODUTO OR @CD_PRODUTO is null)
+    AND		PR.BO_CANCELADO = 0
+
+END
+GO
+
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- LISTAR PRODUTOS POR PADEIRO

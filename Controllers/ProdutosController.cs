@@ -96,5 +96,30 @@ namespace Baker_API.Controllers
                 return BadRequest(retorno);
             }
         }
+
+        [HttpGet("Get")]
+        public IActionResult Get(int CD_PRODUTO)
+        {
+            Produtos prod = new Produtos();
+            RetornoView retorno = new RetornoView();
+
+            try
+            {
+                retorno.Data = prod.GetProduct(CD_PRODUTO);
+
+                if (retorno.Data == null)
+                {
+                    retorno.Mensagem = "Nenhum registro encontrado!";
+                }
+
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                retorno.Mensagem = "Erro de Sistema";
+                retorno.StackTrace = ex.Message + "/n" + ex.StackTrace;
+                return BadRequest(retorno);
+            }
+        }
     }
 }

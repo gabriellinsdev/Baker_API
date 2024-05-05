@@ -58,10 +58,10 @@ namespace Baker_API.Services
 
                 foreach (ProdutoModel produtoModel in lista)
                 {
-                    ProdutoDetailView view = new ProdutoDetailView();
-                    view = Converter(produtoModel);
+                    ProdutoDetailView viewProduto = new ProdutoDetailView();
+                    viewProduto = Converter(produtoModel);
 
-                    ListaProdutos.Add(view);
+                    ListaProdutos.Add(viewProduto);
                 }
 
                 if (ListaProdutos.Count() == 0)
@@ -70,6 +70,23 @@ namespace Baker_API.Services
                 }
 
                 return ListaProdutos;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ProdutoDetailView GetProduct(int CD_PRODUTO)
+        {
+            try
+            {
+                Repository.ProdutoRepository rep = new Repository.ProdutoRepository();
+
+                ProdutoModel produto = rep.GetProduct(CD_PRODUTO);
+                ProdutoDetailView viewProduto = Converter(produto);
+
+                return viewProduto;
             }
             catch (Exception)
             {
