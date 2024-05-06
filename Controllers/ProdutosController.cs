@@ -30,8 +30,8 @@ namespace Baker_API.Controllers
             }
         }
 
-        [HttpPut("Update")]
-        public IActionResult Update(ProdutoView produto)
+        [HttpPost("Update")]
+        public IActionResult Update([FromForm] ProdutoView produto)
         {
             Produtos prod = new Produtos();
             RetornoView retorno = new RetornoView();

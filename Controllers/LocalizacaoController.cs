@@ -15,6 +15,11 @@ namespace Baker_API.Controllers
 
             try
             {
+                if (LS_ALIMENTOS_RESTRITOS == "null")
+                {
+                    LS_ALIMENTOS_RESTRITOS = null;
+                }
+
                 // Pesquisa Latitude/Longitudo do Cliente pelo CEP
                 LocalizacaoView localizacao = GoogleMaps.ZipCodeSearch(CEP_CLIENTE);
 

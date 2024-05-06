@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Baker_API.Controllers
 {
-    public class UsuarioController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class UsuarioController : ControllerBase
     {
         [HttpGet("Get")]
         public IActionResult Get(Guid CD_USUARIO)

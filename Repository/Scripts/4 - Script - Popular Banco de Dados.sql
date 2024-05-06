@@ -37,8 +37,8 @@ values
 -- CADASTRO ALIMENTOS RESTRITIVOS
 --------------------------------------------------------------------------------------------------------------------------------------------
 INSERT  INTO dbo.TBL_ALIMENTOS_RESTRITOS (CD_ALIMENTO_RESTRITO, DS_ALIMENTO) values
-(1,'GLUTEN'),
-(2,'LACTOSE'),
+(1,'ZERO GLUTEN'),
+(2,'ZERO LACTOSE'),
 (3,'LOW-CARB'),
 (4,'ARTESANAL')
 
@@ -118,7 +118,7 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         (
             SELECT  R.CD_ALIMENTO_RESTRITO 
             FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
-            WHERE   R.DS_ALIMENTO IN ('LACTOSE')
+            WHERE   R.DS_ALIMENTO IN ('ARTESANAL')
         ) A
 WHERE   U.NM_USUARIO IN ('GABRIEL','DIOGO','FELIPE','LUIS')
 AND     P.NM_PRODUTO IN ('Pão de Leite')
@@ -131,10 +131,23 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
         (
             SELECT  R.CD_ALIMENTO_RESTRITO 
             FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
-            WHERE   R.DS_ALIMENTO IN ('GLUTEN')
+            WHERE   R.DS_ALIMENTO IN ('ZERO LACTOSE')
         ) A
 WHERE   U.NM_USUARIO IN ('GABRIEL','DIOGO','FELIPE')
-AND     P.NM_PRODUTO IN ('Pão de Leite', 'Pão Integral', 'Pão Francês', 'Pão Italiano', 'Pão de Forma')
+AND     P.NM_PRODUTO IN ('Pão Integral', 'Pão Francês', 'Pão Italiano', 'Pão de Forma')
+UNION
+SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
+FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
+        INNER JOIN dbo.TBL_PRODUTOS P WITH (NOLOCK) 
+        ON  P.CD_USUARIO = U.CD_USUARIO
+        OUTER APPLY
+        (
+            SELECT  R.CD_ALIMENTO_RESTRITO 
+            FROM    dbo.TBL_ALIMENTOS_RESTRITOS R WITH(NOLOCK)
+            WHERE   R.DS_ALIMENTO IN ('ZERO GLUTEN')
+        ) A
+WHERE   U.NM_USUARIO IN ('DIOGO','FELIPE')
+AND     P.NM_PRODUTO IN ('Pão Integral', 'Pão de Forma')
 UNION
 SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
 FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
@@ -160,7 +173,7 @@ FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
             WHERE   R.DS_ALIMENTO IN ('ARTESANAL')
         ) A
 WHERE   U.NM_USUARIO IN ('DIOGO')
-AND     P.NM_PRODUTO IN ('Pão de Leite', 'Pão Italiano')
+AND     P.NM_PRODUTO IN ('Pão Italiano')
 UNION
 SELECT  P.CD_PRODUTO, A.CD_ALIMENTO_RESTRITO
 FROM    dbo.TBL_USUARIOS U WITH (NOLOCK)
