@@ -1,6 +1,4 @@
 ﻿using Baker_API.Domains;
-using System.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Baker_API.Repository
 {

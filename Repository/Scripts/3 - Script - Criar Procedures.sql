@@ -3,6 +3,33 @@ GO
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------
+-- SELECIONAR DADOS DO USUARIO
+--------------------------------------------------------------------------------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.spSELUsuario 
+    @CD_USUARIO UNIQUEIDENTIFIER
+AS
+BEGIN
+
+	SELECT	US.CD_USUARIO,
+			NM_USUARIO    = CASE WHEN TP.TP_USUARIO IS NOT NULL THEN US.NM_USUARIO + ' (' + TP.TP_USUARIO + ')' ELSE '' END,
+			TP.TP_USUARIO
+
+	FROM	dbo.TBL_USUARIOS	US	WITH(NOLOCK)
+
+		OUTER APPLY
+		(
+			SELECT TP_USUARIO = CASE WHEN LEN(US.CD_CPF_CNPJ) = 11 THEN 'CLIENTE' 
+							         WHEN LEN(US.CD_CPF_CNPJ) = 14 THEN 'PADEIRO' ELSE 'NÂO DEFINIDO'END
+
+		) TP
+	WHERE	US.CD_USUARIO = @CD_USUARIO
+
+
+END
+GO
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
 -- INSERIR PRODUTOS
 --------------------------------------------------------------------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE dbo.spINSProduto
