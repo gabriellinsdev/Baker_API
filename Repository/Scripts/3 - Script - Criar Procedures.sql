@@ -39,17 +39,16 @@ CREATE OR ALTER PROCEDURE dbo.spINSProduto
 	@NM_PRODUTO          VARCHAR(100), 
 	@DS_PRODUTO          VARCHAR(300),
 	@VL_PRECO            DECIMAL(6,2),
-    @VB_IMAGEM           VARBINARY(MAX),
-    @LS_ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL      -- Exemplo: 
-                                         --'<ALIMENTOSRESTRITOS>
-                                         --    <ITEM>
-                                         --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
-                                         --    </ITEM>
-                                         --    <ITEM>
-                                         --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
-                                         --    </ITEM>
-                                        --</ALIMENTOSRESTRITOS>'
-
+    @LS_ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL,    -- Exemplo: 
+                                                    --'<ALIMENTOSRESTRITOS>
+                                                    --    <ITEM>
+                                                    --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
+                                                    --    </ITEM>
+                                                    --    <ITEM>
+                                                    --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
+                                                    --    </ITEM>
+                                                    --</ALIMENTOSRESTRITOS>'
+    @VB_IMAGEM           VARBINARY(MAX)
 AS
 BEGIN
 
@@ -121,16 +120,16 @@ CREATE OR ALTER PROCEDURE dbo.spUPDProduto
 	@NM_PRODUTO VARCHAR(100), 
 	@DS_PRODUTO VARCHAR(300),
 	@VL_PRECO DECIMAL(6,2),
-    @VB_IMAGEM VARBINARY(MAX),
-    @LS_ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
-                                         --'<ALIMENTOSRESTRITOS>
-                                         --    <ITEM>
-                                         --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
-                                         --    </ITEM>
-                                         --    <ITEM>
-                                         --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
-                                         --    </ITEM>
-                                        --</ALIMENTOSRESTRITOS>'
+    @LS_ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL,    -- Exemplo: 
+                                                    --'<ALIMENTOSRESTRITOS>
+                                                    --    <ITEM>
+                                                    --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
+                                                    --    </ITEM>
+                                                    --    <ITEM>
+                                                    --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
+                                                    --    </ITEM>
+                                                    --</ALIMENTOSRESTRITOS>'
+    @VB_IMAGEM           VARBINARY(MAX)  = NULL
 
 AS
 BEGIN
@@ -145,7 +144,7 @@ BEGIN
 		NM_PRODUTO	= @NM_PRODUTO,
 		DS_PRODUTO	= @DS_PRODUTO,
 		VL_PRECO 	= @VL_PRECO,
-        VB_IMAGEM   = @VB_IMAGEM
+        VB_IMAGEM   = isnull(@VB_IMAGEM, VB_IMAGEM) -- SE a variavel imagem for Null, então salva o proprio valor salvo no campo da tabela.
 	WHERE
         CD_PRODUTO = @CD_Produto
 
@@ -255,13 +254,13 @@ GO
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- LISTAR PRODUTOS POR PADEIRO
 --------------------------------------------------------------------------------------------------------------------------------------------
-CREATE OR ALTER PROCEDURE dbo.spLSTProduto
+CREATE OR ALTER PROCEDURE dbo.spLSTProduto 
     @CD_USUARIO UNIQUEIDENTIFIER
 AS
 BEGIN
 
-	-- ESTA CTE RETORNA TODOS OS PRODUTOS DO PADEIRO, E SEUS RESPACTIVOS ALIMENTOS RESTRITOS EM FORMATO XML
-    ;WITH ALIMENTOS AS
+	-- ESTA CTE RETORNA TODOS OS PRODUTOS DO PADEIRO, E SEUS RESPECTIVOS ALIMENTOS RESTRITOS EM FORMATO XML
+    ;WITH ALIMENTOS_RESTRITOS AS
     (
 		SELECT
 				P.CD_USUARIO,
@@ -278,8 +277,7 @@ BEGIN
 				INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK) 
 				ON P.CD_PRODUTO = PA.CD_PRODUTO
 		GROUP BY
-				P.CD_USUARIO, P.CD_PRODUTO
-  
+				P.CD_USUARIO, P.CD_PRODUTO  
     )    
 	SELECT
 			PR.CD_PRODUTO,
@@ -290,9 +288,9 @@ BEGIN
 			PR.VB_IMAGEM,
 			AL.LS_ALIMENTOS_RESTRITOS
 		
-    FROM    dbo.TBL_PRODUTOS PR  WITH (NOLOCK)
+    FROM    dbo.TBL_PRODUTOS				PR  WITH (NOLOCK)
 
-            LEFT JOIN   ALIMENTOS       AL
+            LEFT JOIN ALIMENTOS_RESTRITOS	AL
             ON  AL.CD_USUARIO = PR.CD_USUARIO
 			AND AL.CD_PRODUTO = PR.CD_PRODUTO
 	WHERE
@@ -306,25 +304,23 @@ GO
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- LISTAR LOCALIZACAO DOS PADEIROS
 --------------------------------------------------------------------------------------------------------------------------------------------
-CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros
-    @NM_CIDADE  VARCHAR(50),
-    @LS_ALIMENTOS_RESTRITOS XML = NULL      -- Exemplo: 
-                                         --'<ALIMENTOSRESTRITOS>
-                                         --    <ITEM>
-                                         --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
-                                         --    </ITEM>
-                                         --    <ITEM>
-                                         --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
-                                         --    </ITEM>
-                                        --</ALIMENTOSRESTRITOS>'
-
+CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros 
+    @NM_CIDADE  VARCHAR(50) = NULL,
+    @LS_ALIMENTOS_RESTRITOS XML = NULL  -- Exemplo: 
+									    --'<ALIMENTOSRESTRITOS>
+									    --    <ITEM>
+									    --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
+									    --    </ITEM>
+									    --    <ITEM>
+									    --        <CD_ALIMENTO_RESTRITO>2</CD_ALIMENTO_RESTRITO>
+									    --    </ITEM>
 AS
 BEGIN
 
-	declare @hDoc AS INT    
-    exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS
+	DECLARE @hDoc AS INT    
+    EXEC    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS
 
-    ;WITH RESTRITOS AS
+	;WITH RESTRITOS AS
 	(
 		SELECT  
 				CD_ALIMENTO_RESTRITO
@@ -342,17 +338,37 @@ BEGIN
 
         FROM    dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS   PA  WITH (NOLOCK)
 					                    
-				INNER JOIN dbo.TBL_PRODUTOS  P  WITH (NOLOCK)
+                INNER JOIN dbo.TBL_PRODUTOS  P  WITH (NOLOCK)
                 ON  P.CD_PRODUTO = PA.CD_PRODUTO
 
-		WHERE	PA.CD_ALIMENTO_RESTRITO IN (SELECT CD_ALIMENTO_RESTRITO FROM RESTRITOS) OR @LS_ALIMENTOS_RESTRITOS IS NULL
+        WHERE	PA.CD_ALIMENTO_RESTRITO IN (SELECT CD_ALIMENTO_RESTRITO FROM RESTRITOS) OR @LS_ALIMENTOS_RESTRITOS IS NULL
+    )
+    ,   ALIMENTOS_RESTRITOS AS
+	(
+        SELECT 
+                CD_USUARIO = PD.CD_USUARIO,
+			    LS_ALIMENTOS_RESTRITOS = (
+                                            SELECT  DISTINCT
+                                                    AR.CD_ALIMENTO_RESTRITO AS "CD_ALIMENTO_RESTRITO",
+                                                    AR.DS_ALIMENTO AS "DS_ALIMENTO"
+                                        
+                                            FROM    dbo.TBL_PRODUTOS AS PD_INNER
+                                                
+                                                    INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS AS PA_INNER ON PA_INNER.CD_PRODUTO = PD_INNER.CD_PRODUTO
+                                                    INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AS AR ON PA_INNER.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
 
-   )
-    -- RETORNA OS DADOS DOS PADEIROS CADASTRADOS PARA UMA DETERMINADA CIDADE OU TODAS E QUAIS ALIMENTOS RESTRITIVOS 
-    -- CADA PADEIRO UTUILIZA NOS SEUS PRODUTOS.
-	SELECT	DISTINCT
+                                            WHERE   PD_INNER.CD_USUARIO = PD.CD_USUARIO
+                                            FOR XML PATH('ITEM'), ROOT('ALIMENTOS'), TYPE
+									     )
+		FROM 
+			dbo.TBL_PRODUTOS AS PD
+		GROUP BY 
+			PD.CD_USUARIO
+	)   
+    -- RETORNA OS DADOS DOS PADEIROS CADASTRADOS POR CIDADE.
+    SELECT
             US.CD_USUARIO,
-			NM_USUARIO    = CASE WHEN TP.TP_USUARIO IS NOT NULL THEN US.NM_USUARIO + ' (' + TP.TP_USUARIO + ')' ELSE '' END,
+            NM_USUARIO      = CASE WHEN TP.TP_USUARIO IS NOT NULL THEN US.NM_USUARIO + ' (' + TP.TP_USUARIO + ')' ELSE '' END,
             US.DS_EMAIL,
             US.DS_TELEFONE,
             US.NM_ESTADO,
@@ -360,27 +376,29 @@ BEGIN
             US.DS_ENDERECO,
             US.CD_CEP,
             US.CD_SENHA,
-            US.CD_CPF_CNPJ  
+            US.CD_CPF_CNPJ,
+            AL.LS_ALIMENTOS_RESTRITOS 
 
-    FROM    PADEIROS					PD
+    FROM    PADEIROS                        PD
+
+            LEFT JOIN ALIMENTOS_RESTRITOS   AL  WITH (NOLOCK)
+            ON  AL.CD_USUARIO = PD.CD_USUARIO
 	
-			INNER JOIN dbo.TBL_USUARIOS	US  WITH (NOLOCK)
-			ON	PD.CD_USUARIO = US.CD_USUARIO
+            INNER JOIN dbo.TBL_USUARIOS     US  WITH (NOLOCK)
+            ON	PD.CD_USUARIO = US.CD_USUARIO
 
-		    OUTER APPLY
-		    (
-			    SELECT TP_USUARIO = CASE WHEN LEN(US.CD_CPF_CNPJ) = 11 THEN 'CLIENTE' 
-							             WHEN LEN(US.CD_CPF_CNPJ) = 14 THEN 'PADEIRO' ELSE 'NÂO DEFINIDO'END
-
-		    ) TP
+            OUTER APPLY
+            (
+                SELECT TP_USUARIO = CASE WHEN LEN(US.CD_CPF_CNPJ) = 11 THEN 'CLIENTE' 
+                                         WHEN LEN(US.CD_CPF_CNPJ) = 14 THEN 'PADEIRO' ELSE 'NÂO DEFINIDO'END
+            ) TP
 
     WHERE
-            (UPPER(US.NM_CIDADE) = UPPER(@NM_CIDADE) OR @NM_CIDADE IS NULL)
-	AND		LEN(TRIM(US.CD_CPF_CNPJ)) = 14		-- 14 caracteres define ser um CNPJ (PJ) e 11 caracteres define ser um CPF (PF)
+    (       UPPER(US.NM_CIDADE) = UPPER(@NM_CIDADE) OR @NM_CIDADE IS NULL)
+    AND     LEN(TRIM(US.CD_CPF_CNPJ)) = 14      -- 14 caracteres define ser um CNPJ (PJ) e 11 caracteres define ser um CPF (PF)
 
 END
 GO
-
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------

@@ -16,8 +16,8 @@ namespace Baker_API.Repository
                 produto.NM_PRODUTO,
                 produto.DS_PRODUTO,
                 produto.VL_PRECO,
-                produto.VB_IMAGEM,
-                produto.LS_ALIMENTOS_RESTRITOS
+                produto.LS_ALIMENTOS_RESTRITOS,
+                produto.VB_IMAGEM
             });
         }
 
@@ -31,8 +31,8 @@ namespace Baker_API.Repository
                 produto.NM_PRODUTO,
                 produto.DS_PRODUTO,
                 produto.VL_PRECO,
-                produto.VB_IMAGEM,
-                produto.LS_ALIMENTOS_RESTRITOS
+                produto.LS_ALIMENTOS_RESTRITOS,
+                produto.VB_IMAGEM
             });
         }
 

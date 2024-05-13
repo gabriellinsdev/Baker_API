@@ -97,15 +97,19 @@ namespace Baker_API.Services
         private ProdutoModel Converter(ProdutoView produto)
         {
             ProdutoModel obj = new ProdutoModel();
+            
 
-            byte[] VB_IMAGEM = ConvertToByte(produto.FF_IMAGEM);
+            if (produto.FF_IMAGEM != null) {
+                byte[]? VB_IMAGEM = ConvertToByte(produto.FF_IMAGEM);
+                obj.VB_IMAGEM = VB_IMAGEM;
+            }
 
             obj.CD_PRODUTO = produto.CD_PRODUTO;
             obj.DS_PRODUTO = produto.DS_PRODUTO;
             obj.NM_PRODUTO = produto.NM_PRODUTO;
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
-            obj.VB_IMAGEM = VB_IMAGEM;
+
             obj.LS_ALIMENTOS_RESTRITOS = produto.LS_ALIMENTOS_RESTRITOS;
 
             return obj;

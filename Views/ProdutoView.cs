@@ -15,7 +15,7 @@ namespace Baker_API.Views
         [DataMember]
         public decimal VL_PRECO { get; set; }
         [DataMember]
-        public IFormFile FF_IMAGEM { get; set; }
+        public IFormFile? FF_IMAGEM { get; set; }
         [DataMember]
         public string? LS_ALIMENTOS_RESTRITOS { get; set; }
     }
