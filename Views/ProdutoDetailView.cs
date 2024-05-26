@@ -17,6 +17,9 @@ namespace Baker_API.Views
         [DataMember]
         public byte[]? VB_IMAGEM { get; set; }
         [DataMember]
-        public string? LS_ALIMENTOS_RESTRITOS { get; set; }
+        public string? LS_ALIMENTOS_RESTRITOS_PRODUTO { get; set; }
+        [DataMember]
+        public string? LS_ALIMENTOS_RESTRITOS_PADEIRO { get; set; }
+
     }
 }

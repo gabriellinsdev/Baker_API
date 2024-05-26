@@ -17,6 +17,7 @@ namespace Baker_API.Models
         public double CD_LATITUDE { get; set; }
         public double CD_LONGITUDE { get; set; }
         public string DS_MENSAGEM { get; set; }
-        public string? LS_ALIMENTOS_RESTRITOS { get; set; }
+        public string? LS_ALIMENTOS_RESTRITOS_PADEIRO { get; set; }
+        public string? LS_ALIMENTOS_RESTRITOS_PRODUTO { get; set; }
     }
 }

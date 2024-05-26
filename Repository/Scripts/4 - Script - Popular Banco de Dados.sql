@@ -37,10 +37,10 @@ values
 -- CADASTRO ALIMENTOS RESTRITIVOS
 --------------------------------------------------------------------------------------------------------------------------------------------
 INSERT  INTO dbo.TBL_ALIMENTOS_RESTRITOS (CD_ALIMENTO_RESTRITO, DS_ALIMENTO) values
-(1,'ZERO GLUTEN'),
-(2,'ZERO LACTOSE'),
-(3,'LOW-CARB'),
-(4,'ARTESANAL')
+(1,'Zero Gluten'),
+(2,'Zero Lactose'),
+(3,'Low-Carb'),
+(4,'Artesanal')
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------

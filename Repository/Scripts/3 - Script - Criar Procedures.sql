@@ -39,7 +39,7 @@ CREATE OR ALTER PROCEDURE dbo.spINSProduto
 	@NM_PRODUTO          VARCHAR(100), 
 	@DS_PRODUTO          VARCHAR(300),
 	@VL_PRECO            DECIMAL(6,2),
-    @LS_ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL,    -- Exemplo: 
+    @LS_ALIMENTOS_RESTRITOS_PRODUTO VARCHAR(MAX) = NULL,    -- Exemplo: 
                                                     --'<ALIMENTOSRESTRITOS>
                                                     --    <ITEM>
                                                     --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
@@ -78,11 +78,11 @@ BEGIN
 
 
     -- CADASTRAR PRODUTO E SEU ALIMENTOS RESTRITIVOS
-    IF (@LS_ALIMENTOS_RESTRITOS IS NOT NULL)
+    IF (@LS_ALIMENTOS_RESTRITOS_PRODUTO IS NOT NULL)
     BEGIN
 
         declare @hDoc AS INT    
-        exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS
+        exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS_PRODUTO
 
         ;WITH Dados AS  
         (  
@@ -120,7 +120,7 @@ CREATE OR ALTER PROCEDURE dbo.spUPDProduto
 	@NM_PRODUTO VARCHAR(100), 
 	@DS_PRODUTO VARCHAR(300),
 	@VL_PRECO DECIMAL(6,2),
-    @LS_ALIMENTOS_RESTRITOS VARCHAR(MAX) = NULL,    -- Exemplo: 
+    @LS_ALIMENTOS_RESTRITOS_PRODUTO VARCHAR(MAX) = NULL,    -- Exemplo: 
                                                     --'<ALIMENTOSRESTRITOS>
                                                     --    <ITEM>
                                                     --        <CD_ALIMENTO_RESTRITO>1</CD_ALIMENTO_RESTRITO>
@@ -150,11 +150,11 @@ BEGIN
 
 
      -- CADASTRAR PRODUTO E SEU ALIMENTOS RESTRITIVOS
-    IF (@LS_ALIMENTOS_RESTRITOS IS NOT NULL)
+    IF (@LS_ALIMENTOS_RESTRITOS_PRODUTO IS NOT NULL)
     BEGIN
 
         declare @hDoc AS INT    
-        exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS
+        exec    sp_xml_preparedocument @hDoc OUTPUT, @LS_ALIMENTOS_RESTRITOS_PRODUTO
 
         ;WITH Dados AS  
         (  
@@ -213,22 +213,20 @@ BEGIN
     ;WITH ALIMENTOS AS
     (
 		SELECT
-				--P.CD_USUARIO,
 				P.CD_PRODUTO,
-				(
-					SELECT	CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO,
-							DS_ALIMENTO			 = AR.DS_ALIMENTO
-					FROM	dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK)
-							INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR WITH (NOLOCK) ON PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
-					WHERE	P.CD_PRODUTO = PA.CD_PRODUTO
-					FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
-				) AS 'LS_ALIMENTOS_RESTRITOS'
+				LS_ALIMENTOS_RESTRITOS_PRODUTO = (
+					                                SELECT	CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO,
+							                                DS_ALIMENTO			 = AR.DS_ALIMENTO
+					                                FROM	dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK)
+							                                INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR WITH (NOLOCK) ON PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
+					                                WHERE	P.CD_PRODUTO = PA.CD_PRODUTO
+					                                FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
+				                                 )
 		FROM	dbo.TBL_PRODUTOS P WITH (NOLOCK)
 				INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK) 
 				ON P.CD_PRODUTO = PA.CD_PRODUTO
 		GROUP BY
-				P.CD_USUARIO, P.CD_PRODUTO
-  
+				P.CD_USUARIO, P.CD_PRODUTO  
     )    
 	SELECT
 			PR.CD_PRODUTO,
@@ -236,7 +234,7 @@ BEGIN
 			PR.DS_PRODUTO,
 			PR.VL_PRECO,
 			PR.VB_IMAGEM,
-			AL.LS_ALIMENTOS_RESTRITOS
+			LS_ALIMENTOS_RESTRITOS_PRODUTO = AL.LS_ALIMENTOS_RESTRITOS_PRODUTO
 		
     FROM    dbo.TBL_PRODUTOS PR  WITH (NOLOCK)
 
@@ -254,31 +252,53 @@ GO
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- LISTAR PRODUTOS POR PADEIRO
 --------------------------------------------------------------------------------------------------------------------------------------------
-CREATE OR ALTER PROCEDURE dbo.spLSTProduto 
+CREATE OR ALTER PROCEDURE dbo.spLSTProduto
     @CD_USUARIO UNIQUEIDENTIFIER
 AS
 BEGIN
 
 	-- ESTA CTE RETORNA TODOS OS PRODUTOS DO PADEIRO, E SEUS RESPECTIVOS ALIMENTOS RESTRITOS EM FORMATO XML
-    ;WITH ALIMENTOS_RESTRITOS AS
+    ;WITH ALIMENTOS_RESTRITOS_PRODUTO AS
     (
 		SELECT
 				P.CD_USUARIO,
 				P.CD_PRODUTO,
-				(
-					SELECT	CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO,
-							DS_ALIMENTO			 = AR.DS_ALIMENTO
-					FROM	dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK)
-							INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR WITH (NOLOCK) ON PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
-					WHERE	P.CD_PRODUTO = PA.CD_PRODUTO
-					FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
-				) AS 'LS_ALIMENTOS_RESTRITOS'
+				LS_ALIMENTOS_RESTRITOS_PRODUTO = (
+					                                SELECT	CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO,
+							                                DS_ALIMENTO			 = AR.DS_ALIMENTO
+					                                FROM	dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK)
+							                                INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AR WITH (NOLOCK) ON PA.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
+					                                WHERE	P.CD_PRODUTO = PA.CD_PRODUTO
+					                                FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
+                                                 )
 		FROM	dbo.TBL_PRODUTOS P WITH (NOLOCK)
 				INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS PA WITH (NOLOCK) 
 				ON P.CD_PRODUTO = PA.CD_PRODUTO
 		GROUP BY
 				P.CD_USUARIO, P.CD_PRODUTO  
-    )    
+    )
+    ,   ALIMENTOS_RESTRITOS_PADEIRO AS
+	(
+        SELECT 
+                CD_USUARIO = PD.CD_USUARIO,
+			    LS_ALIMENTOS_RESTRITOS_PADEIRO = (
+                                                    SELECT  DISTINCT
+                                                            AR.CD_ALIMENTO_RESTRITO AS "CD_ALIMENTO_RESTRITO",
+                                                            AR.DS_ALIMENTO AS "DS_ALIMENTO"
+                                        
+                                                    FROM    dbo.TBL_PRODUTOS AS PD_INNER
+                                                
+                                                            INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS AS PA_INNER ON PA_INNER.CD_PRODUTO = PD_INNER.CD_PRODUTO
+                                                            INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AS AR ON PA_INNER.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
+
+                                                    WHERE   PD_INNER.CD_USUARIO = PD.CD_USUARIO
+                                                    FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
+									             )
+		FROM 
+			dbo.TBL_PRODUTOS AS PD
+		GROUP BY 
+			PD.CD_USUARIO
+	)  
 	SELECT
 			PR.CD_PRODUTO,
 			PR.CD_USUARIO,
@@ -286,13 +306,18 @@ BEGIN
 			PR.DS_PRODUTO,
 			PR.VL_PRECO,
 			PR.VB_IMAGEM,
-			AL.LS_ALIMENTOS_RESTRITOS
+			AE.LS_ALIMENTOS_RESTRITOS_PADEIRO,
+			AO.LS_ALIMENTOS_RESTRITOS_PRODUTO
 		
     FROM    dbo.TBL_PRODUTOS				PR  WITH (NOLOCK)
 
-            LEFT JOIN ALIMENTOS_RESTRITOS	AL
-            ON  AL.CD_USUARIO = PR.CD_USUARIO
-			AND AL.CD_PRODUTO = PR.CD_PRODUTO
+            LEFT JOIN ALIMENTOS_RESTRITOS_PRODUTO AO
+            ON  AO.CD_USUARIO = PR.CD_USUARIO
+			AND AO.CD_PRODUTO = PR.CD_PRODUTO
+
+            LEFT JOIN ALIMENTOS_RESTRITOS_PADEIRO AE
+            ON  AE.CD_USUARIO = PR.CD_USUARIO
+
 	WHERE
 			(PR.CD_USUARIO = @CD_USUARIO OR @CD_USUARIO is null)
     AND		PR.BO_CANCELADO = 0
@@ -304,7 +329,7 @@ GO
 --------------------------------------------------------------------------------------------------------------------------------------------
 -- LISTAR LOCALIZACAO DOS PADEIROS
 --------------------------------------------------------------------------------------------------------------------------------------------
-CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros 
+CREATE OR ALTER PROCEDURE dbo.spLSTLocalizacaoPadeiros
     @NM_CIDADE  VARCHAR(50) = NULL,
     @LS_ALIMENTOS_RESTRITOS XML = NULL  -- Exemplo: 
 									    --'<ALIMENTOSRESTRITOS>
@@ -343,23 +368,23 @@ BEGIN
 
         WHERE	PA.CD_ALIMENTO_RESTRITO IN (SELECT CD_ALIMENTO_RESTRITO FROM RESTRITOS) OR @LS_ALIMENTOS_RESTRITOS IS NULL
     )
-    ,   ALIMENTOS_RESTRITOS AS
+    ,   ALIMENTOS_RESTRITOS_PADEIRO AS
 	(
         SELECT 
                 CD_USUARIO = PD.CD_USUARIO,
-			    LS_ALIMENTOS_RESTRITOS = (
-                                            SELECT  DISTINCT
-                                                    AR.CD_ALIMENTO_RESTRITO AS "CD_ALIMENTO_RESTRITO",
-                                                    AR.DS_ALIMENTO AS "DS_ALIMENTO"
+			    LS_ALIMENTOS_RESTRITOS_PADEIRO = (
+                                                    SELECT  DISTINCT
+                                                            AR.CD_ALIMENTO_RESTRITO AS "CD_ALIMENTO_RESTRITO",
+                                                            AR.DS_ALIMENTO AS "DS_ALIMENTO"
                                         
-                                            FROM    dbo.TBL_PRODUTOS AS PD_INNER
+                                                    FROM    dbo.TBL_PRODUTOS AS PD_INNER
                                                 
-                                                    INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS AS PA_INNER ON PA_INNER.CD_PRODUTO = PD_INNER.CD_PRODUTO
-                                                    INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AS AR ON PA_INNER.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
+                                                            INNER JOIN dbo.TBL_PRODUTOS_ALIMENTOS_RESTRITOS AS PA_INNER ON PA_INNER.CD_PRODUTO = PD_INNER.CD_PRODUTO
+                                                            INNER JOIN dbo.TBL_ALIMENTOS_RESTRITOS AS AR ON PA_INNER.CD_ALIMENTO_RESTRITO = AR.CD_ALIMENTO_RESTRITO
 
-                                            WHERE   PD_INNER.CD_USUARIO = PD.CD_USUARIO
-                                            FOR XML PATH('ITEM'), ROOT('ALIMENTOS'), TYPE
-									     )
+                                                    WHERE   PD_INNER.CD_USUARIO = PD.CD_USUARIO
+                                                    FOR XML PATH('ITEM'), ROOT('ALIMENTOSRESTRITOS'), TYPE
+									             )
 		FROM 
 			dbo.TBL_PRODUTOS AS PD
 		GROUP BY 
@@ -377,12 +402,12 @@ BEGIN
             US.CD_CEP,
             US.CD_SENHA,
             US.CD_CPF_CNPJ,
-            AL.LS_ALIMENTOS_RESTRITOS 
+            AE.LS_ALIMENTOS_RESTRITOS_PADEIRO 
 
     FROM    PADEIROS                        PD
 
-            LEFT JOIN ALIMENTOS_RESTRITOS   AL  WITH (NOLOCK)
-            ON  AL.CD_USUARIO = PD.CD_USUARIO
+            LEFT JOIN ALIMENTOS_RESTRITOS_PADEIRO   AE  WITH (NOLOCK)
+            ON  AE.CD_USUARIO = PD.CD_USUARIO
 	
             INNER JOIN dbo.TBL_USUARIOS     US  WITH (NOLOCK)
             ON	PD.CD_USUARIO = US.CD_USUARIO

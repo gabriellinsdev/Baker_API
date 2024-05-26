@@ -31,7 +31,9 @@ namespace Baker_API.Views
         [DataMember]
         public string DS_MENSAGEM { get; set; }
         [DataMember]
-        public string? LS_ALIMENTOS_RESTRITOS { get; set; }
+        public string? LS_ALIMENTOS_RESTRITOS_PADEIRO { get; set; }
+        [DataMember]
+        public string? LS_ALIMENTOS_RESTRITOS_PRODUTO { get; set; }
 
     }
 }

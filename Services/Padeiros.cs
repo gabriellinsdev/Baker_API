@@ -145,7 +145,8 @@ namespace Baker_API.Services
             obj.CD_CPF_CNPJ = padeiro.CD_CPF_CNPJ;
             obj.CD_LATITUDE = padeiro.CD_LATITUDE;
             obj.CD_LONGITUDE = padeiro.CD_LONGITUDE;
-            obj.LS_ALIMENTOS_RESTRITOS = padeiro.LS_ALIMENTOS_RESTRITOS;
+            obj.LS_ALIMENTOS_RESTRITOS_PADEIRO = padeiro.LS_ALIMENTOS_RESTRITOS_PADEIRO;
+            obj.LS_ALIMENTOS_RESTRITOS_PRODUTO = padeiro.LS_ALIMENTOS_RESTRITOS_PRODUTO;
 
             return obj;
         }
@@ -166,7 +167,8 @@ namespace Baker_API.Services
             obj.CD_CPF_CNPJ = padeiro.CD_CPF_CNPJ;
             obj.CD_LATITUDE = padeiro.CD_LATITUDE;
             obj.CD_LONGITUDE = padeiro.CD_LONGITUDE;
-            obj.LS_ALIMENTOS_RESTRITOS = padeiro.LS_ALIMENTOS_RESTRITOS;
+            obj.LS_ALIMENTOS_RESTRITOS_PADEIRO = padeiro.LS_ALIMENTOS_RESTRITOS_PADEIRO;
+            obj.LS_ALIMENTOS_RESTRITOS_PRODUTO = padeiro.LS_ALIMENTOS_RESTRITOS_PRODUTO;
 
             return obj;
         }

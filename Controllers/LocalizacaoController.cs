@@ -8,16 +8,16 @@ namespace Baker_API.Controllers
     {
 
         [HttpGet("ListarPadeirosProximos")]
-        public IActionResult ListarPadeirosProximos(string CEP_CLIENTE, int QT_LINHAS, string? LS_ALIMENTOS_RESTRITOS = null)
+        public IActionResult ListarPadeirosProximos(string CEP_CLIENTE, int QT_LINHAS, string? LS_ALIMENTOS_RESTRITOS_PADEIRO = null)
         {
             GoogleMaps maps = new GoogleMaps();
             RetornoView retorno = new RetornoView();
 
             try
             {
-                if (LS_ALIMENTOS_RESTRITOS == "null")
+                if (LS_ALIMENTOS_RESTRITOS_PADEIRO == "null")
                 {
-                    LS_ALIMENTOS_RESTRITOS = null;
+                    LS_ALIMENTOS_RESTRITOS_PADEIRO = null;
                 }
 
                 // Pesquisa Latitude/Longitudo do Cliente pelo CEP
@@ -31,7 +31,7 @@ namespace Baker_API.Controllers
 
                 // Lista de padeiros por Cidade
                 Padeiros padeiro = new Padeiros();
-                List<PadeiroView> lstPadeiros = padeiro.ListarPadeiros(localizacao.NM_CIDADE, LS_ALIMENTOS_RESTRITOS);
+                List<PadeiroView> lstPadeiros = padeiro.ListarPadeiros(localizacao.NM_CIDADE, LS_ALIMENTOS_RESTRITOS_PADEIRO);
 
 
                 if (lstPadeiros == null || lstPadeiros.Count == 0)

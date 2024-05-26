@@ -109,8 +109,8 @@ namespace Baker_API.Services
             obj.NM_PRODUTO = produto.NM_PRODUTO;
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
-
-            obj.LS_ALIMENTOS_RESTRITOS = produto.LS_ALIMENTOS_RESTRITOS;
+            obj.LS_ALIMENTOS_RESTRITOS_PADEIRO = produto.LS_ALIMENTOS_RESTRITOS_PADEIRO;
+            obj.LS_ALIMENTOS_RESTRITOS_PRODUTO = produto.LS_ALIMENTOS_RESTRITOS_PRODUTO;
 
             return obj;
         }
@@ -125,7 +125,8 @@ namespace Baker_API.Services
             obj.VL_PRECO = produto.VL_PRECO;
             obj.CD_USUARIO = produto.CD_USUARIO;
             obj.VB_IMAGEM = produto.VB_IMAGEM;
-            obj.LS_ALIMENTOS_RESTRITOS = produto.LS_ALIMENTOS_RESTRITOS;
+            obj.LS_ALIMENTOS_RESTRITOS_PADEIRO = produto.LS_ALIMENTOS_RESTRITOS_PADEIRO;
+            obj.LS_ALIMENTOS_RESTRITOS_PRODUTO = produto.LS_ALIMENTOS_RESTRITOS_PRODUTO;
 
             return obj;
         }
